@@ -86,6 +86,58 @@ application policy and is intentionally outside this package.
 No deprecated `GitHub Traffic`, `GitHub Stargazers`, or
 `GitHub Repositories` compatibility products are provided.
 
+## Error Handling
+
+One-call clients throw their caller-supplied `Failure` directly. Bounded
+traversal wraps that `Failure` in a typed error the package owns:
+`GitHub.Organization.Repositories.Client.all` throws
+`GitHub.Organization.Repositories.Traversal.Error<Failure>`, whose cases name
+every way a traversal stops short of a complete result:
+
+```text
+Traversal.Error<Failure>
+├─ cancellation                   the task was cancelled mid-traversal
+├─ client(Failure)               the injected page fetch threw your Failure
+├─ cycle                          a request repeated (pagination loop)
+├─ duplicate(GitHub.Repository.ID) a repository recurred under `.reject`
+├─ items                          the accumulated item limit was exceeded
+└─ pages                          the page limit was exceeded
+```
+
+Because the throw is typed, the catch is exhaustive with no `default`:
+
+```swift
+do {
+    let repositories = try await client.all(
+        request,
+        limit: limit,
+        duplicate: .reject,
+        order: .server
+    )
+    // use repositories
+} catch {
+    switch error {
+    case .cancellation:
+        // traversal observed task cancellation
+    case .client(let failure):
+        // the injected page closure failed with your Failure
+    case .cycle:
+        // pagination returned to an already-seen request
+    case .duplicate(let id):
+        // `.reject` found the same repository twice
+    case .items:
+        // accumulated items exceeded limit.items
+    case .pages:
+        // fetched pages exceeded limit.pages
+    }
+}
+```
+
+The stargazer and authenticated-user repository traversals
+(`GitHub.Repository.Stargazers.Client.all` and
+`GitHub.User.Repositories.Client.all`) throw the same-shaped
+`Traversal.Error<Failure>` without the `.duplicate` case.
+
 ## Development
 
 ```bash
