@@ -1,0 +1,9 @@
+# .github/metadata.yaml
+description: "Typed, transport-independent GitHub API clients for Swift."
+topics:
+  - foundations
+  - github
+  - api-client
+homepage: "https://swift-institute.org"
+readme:
+  family: E
