@@ -4,7 +4,9 @@ extension GitHub.Organization.Repositories.Client {
         limit: GitHub.Organization.Repositories.Traversal.Limit,
         duplicate: GitHub.Organization.Repositories.Traversal.Duplicate,
         order: GitHub.Organization.Repositories.Traversal.Order
-    ) async throws(GitHub.Organization.Repositories.Traversal.Error<Failure>) -> [GitHub.Repository.Summary] {
+    ) async throws(GitHub.Organization.Repositories.Traversal.Error<Failure>) -> [GitHub.Repository
+        .Summary]
+    {
         var repositories: [GitHub.Repository.Summary] = []
         var positions: [GitHub.Repository.ID: Int] = [:]
         var requests: Set<GitHub.Organization.Repositories.Request> = []

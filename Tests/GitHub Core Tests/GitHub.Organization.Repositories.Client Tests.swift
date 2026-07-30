@@ -79,7 +79,8 @@ extension GitHub.Organization.Repositories {
             task.cancel()
 
             await #expect(
-                throws: GitHub.Organization.Repositories.Traversal.Error<Fixture.Failure>.cancellation
+                throws: GitHub.Organization.Repositories.Traversal.Error<Fixture.Failure>
+                    .cancellation
             ) {
                 try await task.value
             }
@@ -87,7 +88,8 @@ extension GitHub.Organization.Repositories {
 
         private func client() throws(Fixture.Failure) -> Client<Fixture.Failure> {
             let second = try self.page(2)
-            return Client { (request: GitHub.Organization.Repositories.Request) async throws(Fixture.Failure) in
+            return Client {
+                (request: GitHub.Organization.Repositories.Request) async throws(Fixture.Failure) in
                 switch request.page.rawValue {
                 case 1:
                     return Client.Page(

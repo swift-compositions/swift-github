@@ -6,9 +6,7 @@ extension GitHub.Repository.Stargazers {
     @Suite("GitHub.Repository.Stargazers.Client.Unit")
     struct Core {
         @Test("Traversal follows stargazer pages")
-        func traversal() async throws(
-            Traversal.Error<GitHub.Repository.Fixture.Failure>
-        ) {
+        func traversal() async throws(Traversal.Error<GitHub.Repository.Fixture.Failure>) {
             guard let second = GitHub.Page.Number(rawValue: 2) else {
                 Issue.record("invalid page fixture")
                 return

@@ -46,16 +46,24 @@ extension GitHub.Repository.Traffic {
         @Test("Traffic endpoint failures remain typed")
         func failure() async {
             let client = Client<GitHub.Repository.Fixture.Failure>(
-                views: { (_: Views.Request) async throws(GitHub.Repository.Fixture.Failure) -> Views.Response in
+                views: {
+                    (_: Views.Request) async throws(GitHub.Repository.Fixture.Failure)
+                        -> Views.Response in
                     throw .expected
                 },
-                clones: { (_: Clones.Request) async throws(GitHub.Repository.Fixture.Failure) -> Clones.Response in
+                clones: {
+                    (_: Clones.Request) async throws(GitHub.Repository.Fixture.Failure)
+                        -> Clones.Response in
                     throw .expected
                 },
-                paths: { (_: Paths.Request) async throws(GitHub.Repository.Fixture.Failure) -> Paths.Response in
+                paths: {
+                    (_: Paths.Request) async throws(GitHub.Repository.Fixture.Failure)
+                        -> Paths.Response in
                     throw .expected
                 },
-                referrers: { (_: Referrers.Request) async throws(GitHub.Repository.Fixture.Failure) -> Referrers.Response in
+                referrers: {
+                    (_: Referrers.Request) async throws(GitHub.Repository.Fixture.Failure)
+                        -> Referrers.Response in
                     throw .expected
                 }
             )
