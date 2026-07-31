@@ -141,8 +141,8 @@ The stargazer and authenticated-user repository traversals
 ## Development
 
 ```bash
-/Users/coen/Developer/swift-institute/Scripts/swift-build package build
-/Users/coen/Developer/swift-institute/Scripts/swift-build package test
+workspace package build
+workspace package test
 ```
 
 ## License
