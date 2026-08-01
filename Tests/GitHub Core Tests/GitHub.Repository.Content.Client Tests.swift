@@ -38,10 +38,12 @@ extension GitHub.Repository.Content {
             )
         }
 
-        enum Fixture {
-            enum Failure: Swift.Error, Equatable, Sendable {
-                case unexpected
-            }
-        }
+        enum Fixture {}
+    }
+}
+
+extension GitHub.Repository.Content.Core.Fixture {
+    enum Failure: Swift.Error, Equatable, Sendable {
+        case unexpected
     }
 }

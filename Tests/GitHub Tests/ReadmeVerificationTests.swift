@@ -12,7 +12,12 @@ import Testing
 
 @Suite
 struct Test {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
 
+extension Test.Integration {
     @Test
     func `Traffic Analytics - API structure verification`() async throws {
         // This test verifies the API structure shown in README examples
