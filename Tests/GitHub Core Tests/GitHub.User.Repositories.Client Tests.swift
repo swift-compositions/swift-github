@@ -6,14 +6,14 @@ extension GitHub.User.Repositories {
     @Suite("GitHub.User.Repositories.Client.Unit")
     struct Core {
         @Test("Traversal follows authenticated-user repository pages")
-        func traversal() async throws(Traversal.Error<GitHub.Repository.Fixture.Failure>) {
+        func traversal() async throws {
             guard let second = GitHub.Page.Number(rawValue: 2) else {
                 Issue.record("invalid page fixture")
                 return
             }
-            let client = Client<GitHub.Repository.Fixture.Failure> {
-                (request: Request) async throws(GitHub.Repository.Fixture.Failure)
-                    -> Client<GitHub.Repository.Fixture.Failure>.Page in
+            let client = Client {
+                (request: Request) async throws(Either<Async.Lifecycle.Error, Page.Error>)
+                    -> Page in
                 // swift-linter:disable:next raw value access
                 // REASON: the fixture pages by the newtype's raw wire number —
                 //   the test's purpose is the paging boundary itself.
@@ -28,7 +28,7 @@ extension GitHub.User.Repositories {
                     return .init(response: .init(repositories: []), next: nil)
 
                 default:
-                    throw .unexpected
+                    throw .right(.transport)
                 }
             }
 
@@ -50,16 +50,14 @@ extension GitHub.User.Repositories {
                 page: .first,
                 size: .maximum
             )
-            let failing = Client<GitHub.Repository.Fixture.Failure> {
-                (_: Request) async throws(GitHub.Repository.Fixture.Failure)
-                    -> Client<GitHub.Repository.Fixture.Failure>.Page in
-                throw .expected
+            let failing = Client {
+                (_: Request) async throws(Either<Async.Lifecycle.Error, Page.Error>) -> Page in
+                throw .right(.transport)
             }
             await #expect(
                 throws:
-                    GitHub.User.Repositories.Traversal.Error<
-                        GitHub.Repository.Fixture.Failure
-                    >.client(.expected)
+                    Either<Async.Lifecycle.Error, GitHub.User.Repositories.Traversal.Error>
+                    .right(.page(.transport))
             ) {
                 try await failing.all(
                     request,
@@ -67,16 +65,14 @@ extension GitHub.User.Repositories {
                 )
             }
 
-            let cycling = Client<GitHub.Repository.Fixture.Failure> {
-                (_: Request) async throws(GitHub.Repository.Fixture.Failure)
-                    -> Client<GitHub.Repository.Fixture.Failure>.Page in
+            let cycling = Client {
+                (_: Request) async throws(Either<Async.Lifecycle.Error, Page.Error>) -> Page in
                 .init(response: .init(repositories: []), next: request)
             }
             await #expect(
                 throws:
-                    GitHub.User.Repositories.Traversal.Error<
-                        GitHub.Repository.Fixture.Failure
-                    >.cycle
+                    Either<Async.Lifecycle.Error, GitHub.User.Repositories.Traversal.Error>
+                    .right(.cycle)
             ) {
                 try await cycling.all(
                     request,
@@ -85,9 +81,8 @@ extension GitHub.User.Repositories {
             }
             await #expect(
                 throws:
-                    GitHub.User.Repositories.Traversal.Error<
-                        GitHub.Repository.Fixture.Failure
-                    >.pages
+                    Either<Async.Lifecycle.Error, GitHub.User.Repositories.Traversal.Error>
+                    .right(.pages)
             ) {
                 try await cycling.all(
                     request,
@@ -104,9 +99,8 @@ extension GitHub.User.Repositories {
             task.cancel()
             await #expect(
                 throws:
-                    GitHub.User.Repositories.Traversal.Error<
-                        GitHub.Repository.Fixture.Failure
-                    >.cancellation
+                    Either<Async.Lifecycle.Error, GitHub.User.Repositories.Traversal.Error>
+                    .left(.cancelled)
             ) {
                 try await task.value
             }

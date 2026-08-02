@@ -1,4 +1,4 @@
-extension GitHub.Organization.Repositories.Client {
+extension GitHub.Organization.Repositories {
     public struct Page: Equatable, Sendable {
         public let response: GitHub.Organization.Repositories.Response
         public let next: GitHub.Organization.Repositories.Request?

@@ -1,12 +1,10 @@
 extension GitHub.Repository.Stargazers.Traversal {
-    public enum Error<Failure: Swift.Error>: Swift.Error, Sendable {
-        case cancellation
-        case client(Failure)
+    public enum Error: Swift.Error, Sendable {
         case cycle
         case items
+        case page(GitHub.Repository.Stargazers.Page.Error)
         case pages
     }
 }
 
-extension GitHub.Repository.Stargazers.Traversal.Error: Equatable
-where Failure: Equatable {}
+extension GitHub.Repository.Stargazers.Traversal.Error: Equatable {}

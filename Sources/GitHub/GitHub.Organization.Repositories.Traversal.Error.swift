@@ -1,13 +1,11 @@
 extension GitHub.Organization.Repositories.Traversal {
-    public enum Error<Failure: Swift.Error>: Swift.Error, Sendable {
-        case cancellation
-        case client(Failure)
+    public enum Error: Swift.Error, Sendable {
         case cycle
         case duplicate(GitHub.Repository.ID)
         case items
+        case page(GitHub.Organization.Repositories.Page.Error)
         case pages
     }
 }
 
-extension GitHub.Organization.Repositories.Traversal.Error: Equatable
-where Failure: Equatable {}
+extension GitHub.Organization.Repositories.Traversal.Error: Equatable {}

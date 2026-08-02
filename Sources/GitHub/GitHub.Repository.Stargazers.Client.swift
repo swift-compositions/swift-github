@@ -1,9 +1,13 @@
 extension GitHub.Repository.Stargazers {
-    public struct Client<Failure: Swift.Error>: Sendable {
-        public var page: @Sendable (Request) async throws(Failure) -> Page
+    public struct Client: Sendable {
+        public var page:
+            @Sendable (Request) async throws(Either<Async.Lifecycle.Error, Page.Error>) -> Page
 
         public init(
-            page: @escaping @Sendable (Request) async throws(Failure) -> Page
+            page:
+                @escaping @Sendable (Request) async throws(Either<
+                    Async.Lifecycle.Error, Page.Error
+                >) -> Page
         ) {
             self.page = page
         }
