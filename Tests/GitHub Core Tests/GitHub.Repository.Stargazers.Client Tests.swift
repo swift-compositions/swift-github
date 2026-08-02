@@ -71,7 +71,7 @@ extension GitHub.Repository.Stargazers {
             await #expect(
                 throws:
                     Either<Async.Lifecycle.Error, GitHub.Repository.Stargazers.Traversal.Error>
-                        .right(.page(.transport))
+                    .right(.page(.transport))
             ) {
                 try await failing.all(
                     request,
@@ -86,7 +86,7 @@ extension GitHub.Repository.Stargazers {
             await #expect(
                 throws:
                     Either<Async.Lifecycle.Error, GitHub.Repository.Stargazers.Traversal.Error>
-                        .right(.cycle)
+                    .right(.cycle)
             ) {
                 try await cycling.all(
                     request,
@@ -96,7 +96,7 @@ extension GitHub.Repository.Stargazers {
             await #expect(
                 throws:
                     Either<Async.Lifecycle.Error, GitHub.Repository.Stargazers.Traversal.Error>
-                        .right(.pages)
+                    .right(.pages)
             ) {
                 try await cycling.all(
                     request,
@@ -114,7 +114,7 @@ extension GitHub.Repository.Stargazers {
             await #expect(
                 throws:
                     Either<Async.Lifecycle.Error, GitHub.Repository.Stargazers.Traversal.Error>
-                        .left(.cancelled)
+                    .left(.cancelled)
             ) {
                 try await task.value
             }

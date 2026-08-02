@@ -92,9 +92,9 @@ extension GitHub.Organization.Repositories {
         private func client() throws(Fixture.Failure) -> Client {
             let second = try self.page(2)
             return Client {
-                (request: GitHub.Organization.Repositories.Request) async throws(
-                    Either<Async.Lifecycle.Error, Page.Error>
-                ) in
+                (request: GitHub.Organization.Repositories.Request) async throws(Either<
+                    Async.Lifecycle.Error, Page.Error
+                >) in
                 // swift-linter:disable:next raw value access
                 // REASON: test-only fixture switching on the request's raw
                 // page number to script per-page responses.
