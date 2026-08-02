@@ -23,8 +23,10 @@ extension GitHub.User.Repositories {
                         response: .init(repositories: []),
                         next: .init(page: second, size: .maximum)
                     )
+
                 case 2:
                     return .init(response: .init(repositories: []), next: nil)
+
                 default:
                     throw .unexpected
                 }
