@@ -1,6 +1,6 @@
 import Testing
 
-@testable import GitHub
+@testable import GitHub_Repositories
 
 extension GitHub.Repository.Content {
     @Suite("GitHub.Repository.Content.Client.Unit")

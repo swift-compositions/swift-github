@@ -1,7 +1,7 @@
 import RFC_3986
 import Testing
 
-@testable import GitHub
+@testable import GitHub_OAuth
 
 extension GitHub.OAuth {
     @Suite("GitHub.OAuth.Client.Unit")
