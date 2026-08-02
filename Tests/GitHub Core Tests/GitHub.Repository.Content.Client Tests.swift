@@ -25,7 +25,7 @@ extension GitHub.Repository.Content {
             }
 
             await #expect(throws: Fixture.Failure.unexpected) {
-                try await client.get(self.request("swift-package"))
+                try await client.get(request("swift-package"))
             }
         }
 

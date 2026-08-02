@@ -43,7 +43,7 @@ extension GitHub.Organization.Repositories {
             ) {
                 try await client.all(
                     request,
-                    limit: self.bounds(pages: 2, items: 3),
+                    limit: bounds(pages: 2, items: 3),
                     duplicate: .reject,
                     order: .server
                 )
@@ -57,8 +57,8 @@ extension GitHub.Organization.Repositories {
                 throws: GitHub.Organization.Repositories.Traversal.Error<Fixture.Failure>.pages
             ) {
                 try await client.all(
-                    self.request(page: .first),
-                    limit: self.bounds(pages: 1, items: 3),
+                    request(page: .first),
+                    limit: bounds(pages: 1, items: 3),
                     duplicate: .preserve,
                     order: .server
                 )
@@ -70,8 +70,8 @@ extension GitHub.Organization.Repositories {
             let client = try self.client()
             let task = Task {
                 try await client.all(
-                    self.request(page: .first),
-                    limit: self.bounds(pages: 2, items: 3),
+                    request(page: .first),
+                    limit: bounds(pages: 2, items: 3),
                     duplicate: .preserve,
                     order: .server
                 )
@@ -98,22 +98,24 @@ extension GitHub.Organization.Repositories {
                     return Client.Page(
                         response: .init(
                             repositories: [
-                                self.repository(id: 2, name: "beta"),
-                                self.repository(id: 1, name: "alpha"),
+                                repository(id: 2, name: "beta"),
+                                repository(id: 1, name: "alpha"),
                             ]
                         ),
                         next: self.request(page: second)
                     )
+
                 case 2:
                     return Client.Page(
                         response: .init(
                             repositories: [
-                                self.repository(id: 1, name: "alpha-later"),
-                                self.repository(id: 3, name: "gamma"),
+                                repository(id: 1, name: "alpha-later"),
+                                repository(id: 3, name: "gamma"),
                             ]
                         ),
                         next: nil
                     )
+
                 default:
                     throw .unexpected
                 }
