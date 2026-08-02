@@ -1,4 +1,4 @@
-extension GitHub.Repository.Stargazers.Client {
+extension GitHub.Repository.Stargazers {
     public struct Page: Equatable, Sendable {
         public let response: GitHub.Repository.Stargazers.Response
         public let next: GitHub.Repository.Stargazers.Request?

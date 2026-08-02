@@ -2,7 +2,7 @@ extension GitHub.Repository.Stargazers.Client {
     public func all(
         _ request: GitHub.Repository.Stargazers.Request,
         limit: GitHub.Repository.Stargazers.Traversal.Limit
-    ) async throws(GitHub.Repository.Stargazers.Traversal.Error<Failure>)
+    ) async throws(Either<Async.Lifecycle.Error, GitHub.Repository.Stargazers.Traversal.Error>)
         -> [GitHub.Repository.Stargazers.Stargazer]
     {
         var stargazers: [GitHub.Repository.Stargazers.Stargazer] = []
@@ -11,21 +11,24 @@ extension GitHub.Repository.Stargazers.Client {
         var pages: UInt = 0
 
         while let request = current {
-            guard !Task<Never, Never>.isCancelled else { throw .cancellation }
+            guard !Task<Never, Never>.isCancelled else { throw .left(.cancelled) }
             // swift-linter:disable:next raw value access
             // REASON: same-package traversal-limit boundary — the page counter
             //   is compared against the limit newtype's own raw magnitude.
-            guard pages < limit.pages.rawValue else { throw .pages }
-            guard requests.insert(request).inserted else { throw .cycle }
+            guard pages < limit.pages.rawValue else { throw .right(.pages) }
+            guard requests.insert(request).inserted else { throw .right(.cycle) }
 
-            let page: Page
-            do throws(Failure) {
+            let page: GitHub.Repository.Stargazers.Page
+            do throws(Either<Async.Lifecycle.Error, GitHub.Repository.Stargazers.Page.Error>) {
                 page = try await self.page(request)
             } catch {
-                throw .client(error)
+                switch error {
+                case .left(let error): throw .left(error)
+                case .right(let error): throw .right(.page(error))
+                }
             }
 
-            guard !Task<Never, Never>.isCancelled else { throw .cancellation }
+            guard !Task<Never, Never>.isCancelled else { throw .left(.cancelled) }
             pages += 1
             stargazers.append(contentsOf: page.response.stargazers)
 
@@ -33,7 +36,7 @@ extension GitHub.Repository.Stargazers.Client {
             // REASON: same-package traversal-limit boundary — the accumulated
             //   item count is compared against the limit newtype's raw magnitude.
             guard UInt(stargazers.count) <= limit.items.rawValue else {
-                throw .items
+                throw .right(.items)
             }
             current = page.next
         }

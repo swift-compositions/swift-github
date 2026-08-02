@@ -37,9 +37,9 @@ extension GitHub.Organization.Repositories {
 
             #expect(repositories.map(\.id.underlying) == [2, 1, 3])
             await #expect(
-                throws: GitHub.Organization.Repositories.Traversal.Error<Fixture.Failure>.duplicate(
-                    .init(1)
-                )
+                throws:
+                    Either<Async.Lifecycle.Error, GitHub.Organization.Repositories.Traversal.Error>
+                    .right(.duplicate(.init(1)))
             ) {
                 try await client.all(
                     request,
@@ -54,7 +54,9 @@ extension GitHub.Organization.Repositories {
         func limit() async throws {
             let client = try self.client()
             await #expect(
-                throws: GitHub.Organization.Repositories.Traversal.Error<Fixture.Failure>.pages
+                throws:
+                    Either<Async.Lifecycle.Error, GitHub.Organization.Repositories.Traversal.Error>
+                    .right(.pages)
             ) {
                 try await client.all(
                     request(page: .first),
@@ -79,23 +81,26 @@ extension GitHub.Organization.Repositories {
             task.cancel()
 
             await #expect(
-                throws: GitHub.Organization.Repositories.Traversal.Error<Fixture.Failure>
-                    .cancellation
+                throws:
+                    Either<Async.Lifecycle.Error, GitHub.Organization.Repositories.Traversal.Error>
+                    .left(.cancelled)
             ) {
                 try await task.value
             }
         }
 
-        private func client() throws(Fixture.Failure) -> Client<Fixture.Failure> {
+        private func client() throws(Fixture.Failure) -> Client {
             let second = try self.page(2)
             return Client {
-                (request: GitHub.Organization.Repositories.Request) async throws(Fixture.Failure) in
+                (request: GitHub.Organization.Repositories.Request) async throws(
+                    Either<Async.Lifecycle.Error, Page.Error>
+                ) in
                 // swift-linter:disable:next raw value access
                 // REASON: test-only fixture switching on the request's raw
                 // page number to script per-page responses.
                 switch request.page.rawValue {
                 case 1:
-                    return Client.Page(
+                    return Page(
                         response: .init(
                             repositories: [
                                 repository(id: 2, name: "beta"),
@@ -106,7 +111,7 @@ extension GitHub.Organization.Repositories {
                     )
 
                 case 2:
-                    return Client.Page(
+                    return Page(
                         response: .init(
                             repositories: [
                                 repository(id: 1, name: "alpha-later"),
@@ -117,7 +122,7 @@ extension GitHub.Organization.Repositories {
                     )
 
                 default:
-                    throw .unexpected
+                    throw .right(.transport)
                 }
             }
         }

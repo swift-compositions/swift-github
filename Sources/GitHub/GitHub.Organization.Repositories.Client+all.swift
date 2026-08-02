@@ -4,7 +4,7 @@ extension GitHub.Organization.Repositories.Client {
         limit: GitHub.Organization.Repositories.Traversal.Limit,
         duplicate: GitHub.Organization.Repositories.Traversal.Duplicate,
         order: GitHub.Organization.Repositories.Traversal.Order
-    ) async throws(GitHub.Organization.Repositories.Traversal.Error<Failure>) -> [GitHub.Repository
+    ) async throws(Either<Async.Lifecycle.Error, GitHub.Organization.Repositories.Traversal.Error>) -> [GitHub.Repository
         .Summary]
     {
         var repositories: [GitHub.Repository.Summary] = []
@@ -14,21 +14,24 @@ extension GitHub.Organization.Repositories.Client {
         var pages: UInt = 0
 
         while let request = current {
-            guard !Task<Never, Never>.isCancelled else { throw .cancellation }
+            guard !Task<Never, Never>.isCancelled else { throw .left(.cancelled) }
             // swift-linter:disable:next raw value access
             // REASON: same-package implementation comparing against the
             // Traversal.Limit boundary type's own raw page count.
-            guard pages < limit.pages.rawValue else { throw .pages }
-            guard requests.insert(request).inserted else { throw .cycle }
+            guard pages < limit.pages.rawValue else { throw .right(.pages) }
+            guard requests.insert(request).inserted else { throw .right(.cycle) }
 
-            let page: Page
-            do throws(Failure) {
+            let page: GitHub.Organization.Repositories.Page
+            do throws(Either<Async.Lifecycle.Error, GitHub.Organization.Repositories.Page.Error>) {
                 page = try await self.page(request)
             } catch {
-                throw .client(error)
+                switch error {
+                case .left(let error): throw .left(error)
+                case .right(let error): throw .right(.page(error))
+                }
             }
 
-            guard !Task<Never, Never>.isCancelled else { throw .cancellation }
+            guard !Task<Never, Never>.isCancelled else { throw .left(.cancelled) }
             pages += 1
 
             for repository in page.response.repositories {
@@ -51,7 +54,7 @@ extension GitHub.Organization.Repositories.Client {
 
                 case .reject:
                     guard positions[repository.id] == nil else {
-                        throw .duplicate(repository.id)
+                        throw .right(.duplicate(repository.id))
                     }
                     positions[repository.id] = repositories.endIndex
                     repositories.append(repository)
@@ -61,7 +64,7 @@ extension GitHub.Organization.Repositories.Client {
                 // REASON: same-package implementation comparing against the
                 // Traversal.Limit boundary type's own raw item count.
                 guard UInt(repositories.count) <= limit.items.rawValue else {
-                    throw .items
+                    throw .right(.items)
                 }
             }
 
