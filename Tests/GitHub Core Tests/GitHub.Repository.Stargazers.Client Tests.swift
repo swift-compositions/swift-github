@@ -30,8 +30,10 @@ extension GitHub.Repository.Stargazers {
                             size: .maximum
                         )
                     )
+
                 case 2:
                     return .init(response: .init(stargazers: []), next: nil)
+
                 default:
                     throw .unexpected
                 }
@@ -75,7 +77,7 @@ extension GitHub.Repository.Stargazers {
             ) {
                 try await failing.all(
                     request,
-                    limit: try self.limit(pages: 1, items: 1)
+                    limit: try limit(pages: 1, items: 1)
                 )
             }
 
@@ -92,7 +94,7 @@ extension GitHub.Repository.Stargazers {
             ) {
                 try await cycling.all(
                     request,
-                    limit: try self.limit(pages: 2, items: 1)
+                    limit: try limit(pages: 2, items: 1)
                 )
             }
             await #expect(
@@ -103,14 +105,14 @@ extension GitHub.Repository.Stargazers {
             ) {
                 try await cycling.all(
                     request,
-                    limit: try self.limit(pages: 1, items: 1)
+                    limit: try limit(pages: 1, items: 1)
                 )
             }
 
             let task = Task {
                 try await cycling.all(
                     request,
-                    limit: try self.limit(pages: 2, items: 1)
+                    limit: try limit(pages: 2, items: 1)
                 )
             }
             task.cancel()

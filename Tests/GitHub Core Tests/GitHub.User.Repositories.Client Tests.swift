@@ -61,7 +61,7 @@ extension GitHub.User.Repositories {
             ) {
                 try await failing.all(
                     request,
-                    limit: try self.limit(pages: 1, items: 1)
+                    limit: try limit(pages: 1, items: 1)
                 )
             }
 
@@ -78,7 +78,7 @@ extension GitHub.User.Repositories {
             ) {
                 try await cycling.all(
                     request,
-                    limit: try self.limit(pages: 2, items: 1)
+                    limit: try limit(pages: 2, items: 1)
                 )
             }
             await #expect(
@@ -89,14 +89,14 @@ extension GitHub.User.Repositories {
             ) {
                 try await cycling.all(
                     request,
-                    limit: try self.limit(pages: 1, items: 1)
+                    limit: try limit(pages: 1, items: 1)
                 )
             }
 
             let task = Task {
                 try await cycling.all(
                     request,
-                    limit: try self.limit(pages: 2, items: 1)
+                    limit: try limit(pages: 2, items: 1)
                 )
             }
             task.cancel()
