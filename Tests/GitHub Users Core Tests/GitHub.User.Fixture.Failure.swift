@@ -1,7 +1,8 @@
-@testable import GitHub
+@testable import GitHub_Users
 
-extension GitHub.Organization.Repositories.Fixture {
+extension GitHub.User.Fixture {
     enum Failure: Swift.Error, Equatable, Sendable {
+        case expected
         case unexpected
     }
 }

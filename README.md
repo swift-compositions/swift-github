@@ -17,6 +17,12 @@ persistence, or application policy.
 | Product | Module | Purpose |
 | --- | --- | --- |
 | GitHub | `GitHub` | Typed one-call clients and bounded paginated traversals |
+| GitHub OAuth | `GitHub_OAuth` | Authorization and token exchange |
+| GitHub Organizations | `GitHub_Organizations` | Organization repository listing and bounded traversal |
+| GitHub Repositories | `GitHub_Repositories` | Repository lookup and content retrieval |
+| GitHub Stargazers | `GitHub_Stargazers` | Timestamped stargazer listing and bounded traversal |
+| GitHub Traffic | `GitHub_Traffic` | Repository views, clones, paths, and referrers |
+| GitHub Users | `GitHub_Users` | Authenticated-user profile, emails, and repository listing |
 
 ## Installation
 
@@ -37,6 +43,22 @@ dependencies: [
     ]
 )
 ```
+
+Each resource is also its own product, so a consumer that only needs one
+resource can depend on it directly instead of the `GitHub` umbrella:
+
+```swift
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "GitHub Traffic", package: "swift-github")
+    ]
+)
+```
+
+The six per-resource products are `GitHub OAuth`, `GitHub Organizations`,
+`GitHub Repositories`, `GitHub Stargazers`, `GitHub Traffic`, and
+`GitHub Users` — see Products above.
 
 ## Usage
 
@@ -83,8 +105,10 @@ in
 Aggregating views, clones, paths, and referrers into an application snapshot is
 application policy and is intentionally outside this package.
 
-No deprecated `GitHub Traffic`, `GitHub Stargazers`, or
-`GitHub Repositories` compatibility products are provided.
+`GitHub Traffic`, `GitHub Stargazers`, and `GitHub Repositories` are
+first-class per-resource products (see Products above) that a consumer can
+depend on directly. They are not deprecated compatibility shims for the
+`GitHub` umbrella.
 
 ## Error Handling
 

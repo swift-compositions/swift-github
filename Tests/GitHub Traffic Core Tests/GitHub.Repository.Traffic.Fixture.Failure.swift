@@ -1,6 +1,6 @@
-@testable import GitHub
+@testable import GitHub_Traffic
 
-extension GitHub.OAuth.Fixture {
+extension GitHub.Repository.Traffic.Fixture {
     enum Failure: Swift.Error, Equatable, Sendable {
         case expected
     }

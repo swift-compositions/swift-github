@@ -1,6 +1,6 @@
 import Testing
 
-@testable import GitHub
+@testable import GitHub_Stargazers
 
 extension GitHub.Repository.Stargazers {
     @Suite("GitHub.Repository.Stargazers.Client.Unit")
@@ -46,7 +46,7 @@ extension GitHub.Repository.Stargazers {
                 size: .maximum
             )
             let limit: GitHub.Repository.Stargazers.Traversal.Limit
-            do throws(GitHub.Repository.Fixture.Failure) {
+            do throws(GitHub.Repository.Stargazers.Fixture.Failure) {
                 limit = try self.limit(pages: 2, items: 1)
             } catch {
                 Issue.record("invalid traversal limit fixture: \(error)")
@@ -123,7 +123,7 @@ extension GitHub.Repository.Stargazers {
         private func limit(
             pages: UInt,
             items: UInt
-        ) throws(GitHub.Repository.Fixture.Failure)
+        ) throws(GitHub.Repository.Stargazers.Fixture.Failure)
             -> GitHub.Repository.Stargazers.Traversal.Limit
         {
             guard

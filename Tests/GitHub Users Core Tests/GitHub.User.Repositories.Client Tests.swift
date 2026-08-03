@@ -1,6 +1,6 @@
 import Testing
 
-@testable import GitHub
+@testable import GitHub_Users
 
 extension GitHub.User.Repositories {
     @Suite("GitHub.User.Repositories.Client.Unit")
@@ -34,7 +34,7 @@ extension GitHub.User.Repositories {
 
             let first = Request(page: .first, size: .maximum)
             let limit: GitHub.User.Repositories.Traversal.Limit
-            do throws(GitHub.Repository.Fixture.Failure) {
+            do throws(GitHub.User.Fixture.Failure) {
                 limit = try self.limit(pages: 2, items: 1)
             } catch {
                 Issue.record("invalid traversal limit fixture: \(error)")
@@ -109,7 +109,7 @@ extension GitHub.User.Repositories {
         private func limit(
             pages: UInt,
             items: UInt
-        ) throws(GitHub.Repository.Fixture.Failure)
+        ) throws(GitHub.User.Fixture.Failure)
             -> GitHub.User.Repositories.Traversal.Limit
         {
             guard
