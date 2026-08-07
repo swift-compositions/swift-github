@@ -51,16 +51,26 @@ extension GitHub.App.Error {
         case .identity:
             "no GitHub App identity is configured; pass --app-id, set GITHUB_APP_ID, "
                 + "or write the identity file in the configuration directory"
+
         case .key(let message): message
+
         case .unreadable: "the configured signing key could not be read"
+
         case .malformedKey: "the configured signing key is not a PEM-armoured RSA private key"
+
         case .unsupportedPlatform:
             "this platform has no signing facility reachable from this build"
+
         case .signing(let message): "cannot sign the application assertion: \(message)"
+
         case .permission(let message): message
+
         case .organization(let message): message
+
         case .transport(let message): message
+
         case .response(let message): message
+
         case .cache(let message): message
         }
     }
