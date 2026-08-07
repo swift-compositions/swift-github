@@ -17,6 +17,10 @@ let package = Package(
             targets: ["GitHub"]
         ),
         .library(
+            name: "GitHub App",
+            targets: ["GitHub App"]
+        ),
+        .library(
             name: "GitHub OAuth",
             targets: ["GitHub OAuth"]
         ),
@@ -58,11 +62,40 @@ let package = Package(
             url: "https://github.com/swift-standards/swift-github-standard.git",
             branch: "main"
         ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-foundations/swift-environment.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-foundations/swift-file-system.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-foundations/swift-json.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-foundations/swift-process.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-foundations/swift-signature.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-ietf/swift-rfc-4648.git",
+            branch: "main"
+        ),
     ],
     targets: [
         .target(
             name: "GitHub",
             dependencies: [
+                .target(name: "GitHub App"),
                 .target(name: "GitHub OAuth"),
                 .target(name: "GitHub Organizations"),
                 .target(name: "GitHub Repositories"),
@@ -70,6 +103,55 @@ let package = Package(
                 .target(name: "GitHub Traffic"),
                 .target(name: "GitHub Users"),
             ]
+        ),
+        .target(
+            name: "GitHub App",
+            dependencies: [
+                .product(
+                    name: "Byte Primitives",
+                    package: "swift-byte-primitives"
+                ),
+                .product(
+                    name: "Byte Primitives Standard Library Integration",
+                    package: "swift-byte-primitives"
+                ),
+                .product(
+                    name: "Either Primitives",
+                    package: "swift-either-primitives"
+                ),
+                .product(
+                    name: "Environment",
+                    package: "swift-environment"
+                ),
+                .product(
+                    name: "File System",
+                    package: "swift-file-system"
+                ),
+                .product(
+                    name: "GitHub Standard",
+                    package: "swift-github-standard"
+                ),
+                .product(
+                    name: "JSON",
+                    package: "swift-json"
+                ),
+                .product(
+                    name: "Process",
+                    package: "swift-process"
+                ),
+                .product(
+                    name: "RFC 4648",
+                    package: "swift-rfc-4648"
+                ),
+                .product(
+                    name: "Signature",
+                    package: "swift-signature"
+                ),
+            ]
+        ),
+        .testTarget(
+            name: "GitHub App Core Tests",
+            dependencies: [.target(name: "GitHub App")]
         ),
         .target(
             name: "GitHub OAuth",
