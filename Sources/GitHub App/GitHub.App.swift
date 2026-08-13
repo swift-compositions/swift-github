@@ -119,7 +119,9 @@ extension GitHub.App {
     }
 
     /// `~/.config/<name>`.
-    static func configurationDirectory(named name: File.Path.Component) throws(Error)
+    static func configurationDirectory(
+        named name: File.Path.Component
+    ) throws(Error)
         -> File.Directory
     {
         guard let home = Environment.read("HOME"), !home.isEmpty else {

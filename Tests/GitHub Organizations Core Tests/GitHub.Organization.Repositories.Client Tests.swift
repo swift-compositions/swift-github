@@ -92,7 +92,9 @@ extension GitHub.Organization.Repositories {
         private func client() throws(Fixture.Failure) -> Client {
             let second = try self.page(2)
             return Client {
-                (request: GitHub.Organization.Repositories.Request) async throws(Either<
+                (
+                    request: GitHub.Organization.Repositories.Request
+                ) async throws(Either<
                     Async.Lifecycle.Error, Page.Error
                 >) in
                 // swift-linter:disable:next raw value access
