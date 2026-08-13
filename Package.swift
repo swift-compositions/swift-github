@@ -75,6 +75,10 @@ let package = Package(
             branch: "main"
         ),
         .package(
+            url: "https://github.com/swift-foundations/swift-kernel.git",
+            branch: "main"
+        ),
+        .package(
             url: "https://github.com/swift-foundations/swift-json.git",
             branch: "main"
         ),
@@ -130,6 +134,10 @@ let package = Package(
                 .product(
                     name: "GitHub Standard",
                     package: "swift-github-standard"
+                ),
+                .product(
+                    name: "Kernel",
+                    package: "swift-kernel"
                 ),
                 .product(
                     name: "JSON",

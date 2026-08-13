@@ -10,14 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import GitHub_Standard
-
-#if canImport(Darwin)
-    private import Darwin
-#elseif canImport(Glibc)
-    private import Glibc
-#elseif canImport(Musl)
-    private import Musl
-#endif
+private import Kernel
 
 extension GitHub.App {
     /// Wall-clock seconds since the POSIX epoch.
@@ -31,6 +24,6 @@ extension GitHub.App {
 
 extension GitHub.App.Clock {
     public static func now() -> Swift.Int64 {
-        Swift.Int64(unsafe time(nil))
+        Kernel.Time.realtime().secondsSinceUnixEpoch
     }
 }
