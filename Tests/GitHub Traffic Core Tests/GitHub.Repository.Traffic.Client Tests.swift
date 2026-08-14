@@ -47,22 +47,30 @@ extension GitHub.Repository.Traffic {
         func failure() async {
             let client = Client<GitHub.Repository.Traffic.Fixture.Failure>(
                 views: {
-                    (_: Views.Request) async throws(GitHub.Repository.Traffic.Fixture.Failure)
+                    (
+                        _: Views.Request
+                    ) async throws(GitHub.Repository.Traffic.Fixture.Failure)
                         -> Views.Response in
                     throw .expected
                 },
                 clones: {
-                    (_: Clones.Request) async throws(GitHub.Repository.Traffic.Fixture.Failure)
+                    (
+                        _: Clones.Request
+                    ) async throws(GitHub.Repository.Traffic.Fixture.Failure)
                         -> Clones.Response in
                     throw .expected
                 },
                 paths: {
-                    (_: Paths.Request) async throws(GitHub.Repository.Traffic.Fixture.Failure)
+                    (
+                        _: Paths.Request
+                    ) async throws(GitHub.Repository.Traffic.Fixture.Failure)
                         -> Paths.Response in
                     throw .expected
                 },
                 referrers: {
-                    (_: Referrers.Request) async throws(GitHub.Repository.Traffic.Fixture.Failure)
+                    (
+                        _: Referrers.Request
+                    ) async throws(GitHub.Repository.Traffic.Fixture.Failure)
                         -> Referrers.Response in
                     throw .expected
                 }

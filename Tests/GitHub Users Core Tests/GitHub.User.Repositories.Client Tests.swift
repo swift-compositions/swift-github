@@ -12,7 +12,9 @@ extension GitHub.User.Repositories {
                 return
             }
             let client = Client {
-                (request: Request) async throws(Either<Async.Lifecycle.Error, Page.Error>)
+                (
+                    request: Request
+                ) async throws(Either<Async.Lifecycle.Error, Page.Error>)
                     -> Page in
                 // swift-linter:disable:next raw value access
                 // REASON: the fixture pages by the newtype's raw wire number —
