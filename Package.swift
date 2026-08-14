@@ -136,7 +136,7 @@ let package = Package(
                     package: "swift-github-standard"
                 ),
                 .product(
-                    name: "Kernel",
+                    name: "Kernel Core",
                     package: "swift-kernel"
                 ),
                 .product(

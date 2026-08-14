@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import GitHub_Standard
-private import Kernel
+private import Kernel_Core
 
 extension GitHub.App {
     /// Wall-clock seconds since the POSIX epoch.
