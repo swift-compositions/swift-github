@@ -12,9 +12,7 @@ extension GitHub.User.Repositories.Client {
 
         while let request = current {
             guard !Task<Never, Never>.isCancelled else { throw .left(.cancelled) }
-            // swift-linter:disable:next raw value access
-            // REASON: same-package traversal-limit boundary — the page counter
-            //   is compared against the limit newtype's own raw magnitude.
+
             guard pages < limit.pages.rawValue else { throw .right(.pages) }
             guard requests.insert(request).inserted else { throw .right(.cycle) }
 
@@ -32,9 +30,6 @@ extension GitHub.User.Repositories.Client {
             pages += 1
             repositories.append(contentsOf: page.response.repositories)
 
-            // swift-linter:disable:next raw value access
-            // REASON: same-package traversal-limit boundary — the accumulated
-            //   item count is compared against the limit newtype's raw magnitude.
             guard UInt(repositories.count) <= limit.items.rawValue else {
                 throw .right(.items)
             }

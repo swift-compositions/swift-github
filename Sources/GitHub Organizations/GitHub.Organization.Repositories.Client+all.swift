@@ -16,9 +16,7 @@ extension GitHub.Organization.Repositories.Client {
 
         while let request = current {
             guard !Task<Never, Never>.isCancelled else { throw .left(.cancelled) }
-            // swift-linter:disable:next raw value access
-            // REASON: same-package implementation comparing against the
-            // Traversal.Limit boundary type's own raw page count.
+
             guard pages < limit.pages.rawValue else { throw .right(.pages) }
             guard requests.insert(request).inserted else { throw .right(.cycle) }
 
@@ -61,9 +59,6 @@ extension GitHub.Organization.Repositories.Client {
                     repositories.append(repository)
                 }
 
-                // swift-linter:disable:next raw value access
-                // REASON: same-package implementation comparing against the
-                // Traversal.Limit boundary type's own raw item count.
                 guard UInt(repositories.count) <= limit.items.rawValue else {
                     throw .right(.items)
                 }

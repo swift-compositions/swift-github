@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-github open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-github project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 internal import Byte_Primitives
 internal import Byte_Primitives_Standard_Library_Integration
 internal import Either_Primitives
@@ -17,22 +6,13 @@ public import File_System
 public import GitHub_Standard
 
 extension GitHub {
-    /// A GitHub App the operator has installed a signing key for.
-    ///
-    /// The three things this needs — an application identity, a signing key,
-    /// and somewhere to cache tokens — are all resolved at run time. Nothing
-    /// is compiled in: even the *name of the directory* under the operator's
-    /// configuration root is the caller's to supply; which application it
-    /// holds a key for, and which key, is the operator's business and never
-    /// this repository's.
+
     public struct App: Sendable {
-        /// The application's numeric identity, used as the assertion issuer.
+
         public let identity: Swift.String
 
-        /// The PEM-armoured private key file. Never rendered into output.
         public let key: File
 
-        /// The directory holding the key, the identity file, and the cache.
         public let directory: File.Directory
 
         public init(identity: Swift.String, key: File, directory: File.Directory) {
@@ -44,30 +24,16 @@ extension GitHub {
 }
 
 extension GitHub.App {
-    /// The file holding the application's numeric identity, when it is not
-    /// supplied by argument or environment.
+
     public static let identityFileName: File.Path.Component = "application-id"
 
-    /// The environment variable consulted for the application identity.
     public static let identityVariable = "GITHUB_APP_ID"
 
-    /// The environment variable consulted for the signing key location.
     public static let keyVariable = "GITHUB_APP_PRIVATE_KEY_PATH"
 }
 
 extension GitHub.App {
-    /// Resolves the application from explicit arguments, the environment, and
-    /// the operator's configuration directory, in that order.
-    ///
-    /// - Parameters:
-    ///   - identity: `--app-id`, when supplied.
-    ///   - keyPath: `--key`, when supplied.
-    ///   - configurationDirectoryName: The name of the directory under the
-    ///     operator's `~/.config` holding the key, the identity file, and the
-    ///     token cache. Names where an operator keeps bot credentials, never
-    ///     which credentials exist or what they can do.
-    /// - Throws: ``GitHub/App/Error`` when no identity or exactly one
-    ///   key cannot be resolved. No thrown message names a filesystem location.
+
     public static func resolve(
         identity argument: Swift.String?,
         keyPath: Swift.String?,
@@ -118,7 +84,6 @@ extension GitHub.App {
         return .init(identity: identity, key: key, directory: directory)
     }
 
-    /// `~/.config/<name>`.
     static func configurationDirectory(
         named name: File.Path.Component
     ) throws(Error)
@@ -136,13 +101,6 @@ extension GitHub.App {
         return root[directory: ".config"][directory: name]
     }
 
-    /// The one `.pem` in the configuration directory.
-    ///
-    /// Ambiguity is an error rather than a guess: a rolled key sits beside its
-    /// predecessor, and silently signing with whichever sorts first would fail
-    /// only once the old key is revoked — long after the choice was made. The
-    /// diagnostic reports *how many* candidates were found and never their
-    /// names, which encode dates and machine layout.
     static func soleKey(in directory: File.Directory) throws(Error) -> File {
         guard directory.stat.exists else {
             throw .key("the configuration directory does not exist")
@@ -190,7 +148,7 @@ extension GitHub.App {
 }
 
 extension Swift.String {
-    /// Drops leading and trailing ASCII whitespace and newlines.
+
     func trimmed() -> Self {
         var slice = Substring(self)
         while let first = slice.first,

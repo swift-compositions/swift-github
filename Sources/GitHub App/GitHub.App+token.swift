@@ -1,26 +1,8 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-github open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-github project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 public import GitHub_Standard
 internal import JSON
 
 extension GitHub.App {
-    /// The installation token for `organization`, from the cache when one is
-    /// still good and from GitHub otherwise.
-    ///
-    /// The mint is two calls under an application assertion: the installation
-    /// for the organization, then a token for that installation. Both are
-    /// needed every time a mint happens — the installation identity is not
-    /// cached separately, because caching it saves one request an hour and
-    /// adds a second thing that can go stale silently.
+
     public func token(
         organization: Swift.String,
         permissions: [Permission],
@@ -43,10 +25,6 @@ extension GitHub.App {
         return (token, false)
     }
 
-    /// Rejects anything that is not a GitHub login.
-    ///
-    /// This value reaches both a URL path and a cache file name. Validating it
-    /// once, here, is what keeps either from being something else.
     static func validate(_ organization: Swift.String) throws(Error) {
         guard !organization.isEmpty, organization.count <= 39 else {
             throw .organization("--org must be a GitHub organization login")
@@ -62,7 +40,6 @@ extension GitHub.App {
         }
     }
 
-    /// The installation identity of this application on `organization`.
     func installation(
         organization: Swift.String,
         assertion: Assertion
@@ -84,7 +61,6 @@ extension GitHub.App {
         return Swift.String(identifier)
     }
 
-    /// Exchanges the assertion for an installation access token.
     func mint(
         installation: Swift.String,
         permissions: [Permission],

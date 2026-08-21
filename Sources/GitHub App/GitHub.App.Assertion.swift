@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-github open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-github project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 internal import Byte_Primitives
 internal import Byte_Primitives_Standard_Library_Integration
 internal import File_System
@@ -17,30 +6,20 @@ internal import RFC_4648
 internal import Signature
 
 extension GitHub.App {
-    /// The short-lived RS256 JWT that authenticates *the application* — the
-    /// credential that buys an installation token, and nothing else.
-    ///
-    /// It is never cached and never leaves this process except as an
-    /// `Authorization` header on the two mint requests.
+
     struct Assertion {
         let compact: Swift.String
     }
 }
 
 extension GitHub.App.Assertion {
-    /// `iat` is backdated a minute and `exp` is nine minutes out.
-    ///
-    /// GitHub rejects an assertion whose `iat` is in *its* future, and the two
-    /// clocks are not the same clock. Backdating absorbs the skew that would
-    /// otherwise make minting fail intermittently on a machine running a
-    /// second fast. Nine minutes stays inside the ten-minute ceiling with room
-    /// for the same skew at the other end.
+
     static let backdate: Swift.Int64 = 60
     static let lifetime: Swift.Int64 = 540
 }
 
 extension GitHub.App.Assertion {
-    /// Builds and signs the assertion for `app` at `now`.
+
     init(
         app: GitHub.App,
         now: Swift.Int64
@@ -61,8 +40,6 @@ extension GitHub.App.Assertion {
         )
     }
 
-    /// The signing seam, taken separately so the encoding can be tested
-    /// without a key facility and without a key.
     init(
         header: Swift.String,
         claims: Swift.String,

@@ -97,9 +97,7 @@ extension GitHub.Organization.Repositories {
                 ) async throws(Either<
                     Async.Lifecycle.Error, Page.Error
                 >) in
-                // swift-linter:disable:next raw value access
-                // REASON: test-only fixture switching on the request's raw
-                // page number to script per-page responses.
+
                 switch request.page.rawValue {
                 case 1:
                     return Page(

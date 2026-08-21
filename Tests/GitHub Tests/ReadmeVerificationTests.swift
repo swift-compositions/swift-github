@@ -1,10 +1,3 @@
-//
-//  ReadmeVerificationTests.swift
-//  swift-github
-//
-//  Created by Claude Code on 31/10/2025.
-//
-
 import Dependencies
 import GitHub
 import GitHub_Types_Shared
@@ -20,7 +13,7 @@ struct Test {
 extension Test.Integration {
     @Test
     func `Traffic Analytics - API structure verification`() async throws {
-        // This test verifies the API structure shown in README examples
+
         let mockClient = GitHub.Client(
             traffic: .init(
                 views: { _, _, _ in .init(count: 100, uniques: 50, views: []) },
@@ -34,7 +27,6 @@ extension Test.Integration {
             collaborators: .init()
         )
 
-        // Verify the traffic client methods work as shown in README
         let views = try await mockClient.traffic.views("coenttb", "swift-github", .day)
         #expect(views.count == 100)
         #expect(views.uniques == 50)
@@ -52,7 +44,7 @@ extension Test.Integration {
 
     @Test
     func `Testing with Mocks - withDependencies pattern`() async throws {
-        // Verify the mocking pattern shown in README works correctly
+
         let mockClient = GitHub.Client(
             traffic: .init(
                 views: { _, _, _ in .init(count: 100, uniques: 50, views: []) },

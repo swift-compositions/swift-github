@@ -1,27 +1,9 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-github open source project
-//
-// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-github project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 public import File_System
 public import GitHub_Standard
 internal import JSON
 
 extension GitHub.App {
-    /// Mode-600 storage for minted tokens, keyed by organization and by the
-    /// exact permission set they were narrowed to.
-    ///
-    /// Keying on the permission set matters as much as keying on the
-    /// organization: a token narrowed to `contents=read` and a token with the
-    /// installation's full grant are different credentials, and handing the
-    /// second one back to a caller that asked for the first would quietly widen
-    /// every subsequent request made with it.
+
     public struct Cache: Sendable {
         public let directory: File.Directory
 
@@ -32,19 +14,12 @@ extension GitHub.App {
 }
 
 extension GitHub.App.Cache {
-    /// The cache file for one organization and permission set.
-    ///
-    /// The name is readable rather than hashed — this directory is one an
-    /// operator is expected to inspect and delete from — and every component
-    /// is drawn from already-validated input, so no shell-supplied text can
-    /// reach a path.
+
     public func file(
         organization: Swift.String,
         permissions: [GitHub.App.Permission]
     ) -> File {
-        // Every component is drawn from validated input, so the component
-        // cannot fail to construct; a fallback name would only hide a defect
-        // in that validation.
+
         let name = "token.\(Self.key(organization: organization, permissions: permissions)).json"
         do throws(Paths.Path.Component.Error) {
             return directory[file: try File.Path.Component(name)]
@@ -64,11 +39,7 @@ extension GitHub.App.Cache {
 }
 
 extension GitHub.App.Cache {
-    /// The cached token for this key, if one is stored and still usable.
-    ///
-    /// A malformed or unreadable entry is *not* an error: the cache is an
-    /// optimization, and failing the command because a stale file cannot be
-    /// decoded would make a purely local hiccup look like a GitHub outage.
+
     public func read(
         organization: Swift.String,
         permissions: [GitHub.App.Permission],
@@ -90,12 +61,6 @@ extension GitHub.App.Cache {
         }
     }
 
-    /// Stores `token`, readable and writable by its owner alone.
-    ///
-    /// The permissions are set after the write rather than trusted from the
-    /// process umask — a token written world-readable is the same disclosure as
-    /// printing it into a log, and a umask is ambient machine state this must
-    /// not depend on.
     public func write(
         _ token: GitHub.App.Token,
         organization: Swift.String,
