@@ -24,7 +24,7 @@ struct `GitHub App Tests` {
         }
     }
 
-    @Test(arguments: ["swift-primitives", "swift-institute", "a", "swift-ietf"])
+    @Test(arguments: ["swift-molecules", "swift-institute", "a", "swift-ietf"])
     func `accepts a GitHub organization login`(login: Swift.String) throws {
         try GitHub.App.validate(login)
     }
@@ -40,30 +40,30 @@ struct `GitHub App Tests` {
     @Test
     func `keys the cache by organization and permission set`() {
         let narrow = GitHub.App.Cache.key(
-            organization: "swift-primitives",
+            organization: "swift-molecules",
             permissions: [.init(name: "contents", level: "read")]
         )
         let wide = GitHub.App.Cache.key(
-            organization: "swift-primitives",
+            organization: "swift-molecules",
             permissions: []
         )
 
         #expect(narrow != wide)
-        #expect(wide == "swift-primitives.all")
-        #expect(narrow == "swift-primitives.contents-read")
+        #expect(wide == "swift-molecules.all")
+        #expect(narrow == "swift-molecules.contents-read")
     }
 
     @Test
     func `orders the permission set so the key is stable`() {
         let one = GitHub.App.Cache.key(
-            organization: "swift-primitives",
+            organization: "swift-molecules",
             permissions: [
                 .init(name: "metadata", level: "read"),
                 .init(name: "contents", level: "read"),
             ]
         )
         let other = GitHub.App.Cache.key(
-            organization: "swift-primitives",
+            organization: "swift-molecules",
             permissions: [
                 .init(name: "contents", level: "read"),
                 .init(name: "metadata", level: "read"),

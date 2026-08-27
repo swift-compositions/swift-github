@@ -1,12 +1,12 @@
 # swift-github
 
-[![CI](https://github.com/swift-foundations/swift-github/actions/workflows/ci.yml/badge.svg)](https://github.com/swift-foundations/swift-github/actions/workflows/ci.yml)
+[![CI](https://github.com/swift-compositions/swift-github/actions/workflows/ci.yml/badge.svg)](https://github.com/swift-compositions/swift-github/actions/workflows/ci.yml)
 
 Typed, transport-independent GitHub clients for Swift.
 
 ## Ecosystem
 
-This package belongs to the Swift Institute Foundations layer. It turns the
+This package belongs to the Swift Institute Compositions layer. It turns the
 contracts from
 [swift-github-standard](https://github.com/swift-standards/swift-github-standard)
 into injectable async capabilities without choosing HTTP, authentication,
@@ -29,7 +29,7 @@ persistence, or application policy.
 ```swift
 dependencies: [
     .package(
-        url: "https://github.com/swift-foundations/swift-github.git",
+        url: "https://github.com/swift-compositions/swift-github.git",
         branch: "main"
     )
 ]
@@ -101,7 +101,7 @@ cycles, or exceeded bounds rather than returning an incomplete result.
 
 This package defines no live or configured-live client. The HTTP binding lives
 in
-[swift-github-http](https://github.com/swift-foundations/swift-github-http).
+[swift-github-http](https://github.com/swift-compositions/swift-github-http).
 Aggregating views, clones, paths, and referrers into an application snapshot is
 application policy and is intentionally outside this package.
 

@@ -1,5 +1,5 @@
-internal import Byte_Primitives
-internal import Byte_Primitives_Standard_Library_Integration
+internal import Byte
+internal import Byte_Standard_Library_Integration
 private import Environment
 public import GitHub_Standard
 internal import JSON

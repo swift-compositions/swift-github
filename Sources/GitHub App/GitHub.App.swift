@@ -1,6 +1,6 @@
-internal import Byte_Primitives
-internal import Byte_Primitives_Standard_Library_Integration
-internal import Either_Primitives
+internal import Byte
+internal import Byte_Standard_Library_Integration
+internal import Either
 private import Environment
 public import File_System
 public import GitHub_Standard

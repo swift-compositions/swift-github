@@ -1,7 +1,7 @@
 # .github/metadata.yaml
 description: "Typed, transport-independent GitHub API clients for Swift."
 topics:
-  - foundations
+  - compositions
   - github
   - api-client
 homepage: "https://swift-institute.org"

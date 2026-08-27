@@ -32,7 +32,7 @@ extension GitHub.Repository.Content {
         private func request(_ repository: String) throws(Fixture.Failure) -> Request {
             guard let path = Path(segments: ["Package.swift"]) else { throw .unexpected }
             return .init(
-                organization: .init("swift-foundations"),
+                organization: .init("swift-compositions"),
                 repository: .init(repository),
                 path: path
             )

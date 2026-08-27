@@ -47,11 +47,11 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-async-primitives.git",
+            url: "https://github.com/swift-molecules/swift-async.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-either-primitives.git",
+            url: "https://github.com/swift-molecules/swift-either.git",
             branch: "main"
         ),
         .package(
@@ -63,31 +63,31 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            url: "https://github.com/swift-molecules/swift-byte.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-environment.git",
+            url: "https://github.com/swift-compositions/swift-environment.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-file-system.git",
+            url: "https://github.com/swift-compositions/swift-file-system.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-kernel.git",
+            url: "https://github.com/swift-compositions/swift-kernel.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-json.git",
+            url: "https://github.com/swift-compositions/swift-json.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-process.git",
+            url: "https://github.com/swift-compositions/swift-process.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-foundations/swift-signature.git",
+            url: "https://github.com/swift-compositions/swift-signature.git",
             branch: "main"
         ),
         .package(
@@ -112,16 +112,16 @@ let package = Package(
             name: "GitHub App",
             dependencies: [
                 .product(
-                    name: "Byte Primitives",
-                    package: "swift-byte-primitives"
+                    name: "Byte",
+                    package: "swift-byte"
                 ),
                 .product(
-                    name: "Byte Primitives Standard Library Integration",
-                    package: "swift-byte-primitives"
+                    name: "Byte Standard Library Integration",
+                    package: "swift-byte"
                 ),
                 .product(
-                    name: "Either Primitives",
-                    package: "swift-either-primitives"
+                    name: "Either",
+                    package: "swift-either"
                 ),
                 .product(
                     name: "Environment",
@@ -181,12 +181,12 @@ let package = Package(
             name: "GitHub Organizations",
             dependencies: [
                 .product(
-                    name: "Async Lifecycle Primitives",
-                    package: "swift-async-primitives"
+                    name: "Async Lifecycle",
+                    package: "swift-async"
                 ),
                 .product(
-                    name: "Either Primitives",
-                    package: "swift-either-primitives"
+                    name: "Either",
+                    package: "swift-either"
                 ),
                 .product(
                     name: "GitHub Standard",
@@ -215,12 +215,12 @@ let package = Package(
             name: "GitHub Stargazers",
             dependencies: [
                 .product(
-                    name: "Async Lifecycle Primitives",
-                    package: "swift-async-primitives"
+                    name: "Async Lifecycle",
+                    package: "swift-async"
                 ),
                 .product(
-                    name: "Either Primitives",
-                    package: "swift-either-primitives"
+                    name: "Either",
+                    package: "swift-either"
                 ),
                 .product(
                     name: "GitHub Standard",
@@ -249,12 +249,12 @@ let package = Package(
             name: "GitHub Users",
             dependencies: [
                 .product(
-                    name: "Async Lifecycle Primitives",
-                    package: "swift-async-primitives"
+                    name: "Async Lifecycle",
+                    package: "swift-async"
                 ),
                 .product(
-                    name: "Either Primitives",
-                    package: "swift-either-primitives"
+                    name: "Either",
+                    package: "swift-either"
                 ),
                 .product(
                     name: "GitHub Standard",
