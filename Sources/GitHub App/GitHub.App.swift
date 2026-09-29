@@ -1,5 +1,5 @@
 internal import Byte
-internal import Byte_Standard_Library_Integration
+internal import Byte
 internal import Either
 private import Environment
 public import File_System

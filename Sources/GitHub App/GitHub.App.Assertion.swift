@@ -1,5 +1,5 @@
 internal import Byte
-internal import Byte_Standard_Library_Integration
+internal import Byte
 internal import File_System
 internal import GitHub_Standard
 internal import RFC_4648
