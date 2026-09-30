@@ -47,8 +47,8 @@ extension GitHub.App.Assertion {
     ) throws(GitHub.App.Error) {
         let signed = Self.signingInput(header: header, claims: claims)
         let signature: [Byte]
-        do {
-            signature = try Signature.RS256.sign(message: [Byte](signed.utf8), key: key)
+        do throws(Signature.RS256.Error) {
+            signature = try Signature.RS256.sign(message: [Byte](utf8: signed), key: key)
         } catch {
             switch error {
             case .malformedKey: throw .malformedKey
@@ -60,7 +60,7 @@ extension GitHub.App.Assertion {
     }
 
     static func signingInput(header: Swift.String, claims: Swift.String) -> Swift.String {
-        [Byte](header.utf8).base64.url.encoded()
-            + "." + [Byte](claims.utf8).base64.url.encoded()
+        [Byte](utf8: header).base64.url.encoded()
+            + "." + [Byte](utf8: claims).base64.url.encoded()
     }
 }
