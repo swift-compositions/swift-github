@@ -116,10 +116,6 @@ let package = Package(
                     package: "swift-byte"
                 ),
                 .product(
-                    name: "Byte",
-                    package: "swift-byte"
-                ),
-                .product(
                     name: "Either",
                     package: "swift-either"
                 ),
