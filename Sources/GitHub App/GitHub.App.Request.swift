@@ -1,5 +1,4 @@
 internal import Byte
-internal import Byte
 private import Environment
 public import GitHub_Standard
 internal import JSON
