@@ -3,8 +3,7 @@ extension GitHub.Repository.Traffic {
         public var views: @Sendable (Views.Request) async throws(Failure) -> Views.Response
         public var clones: @Sendable (Clones.Request) async throws(Failure) -> Clones.Response
         public var paths: @Sendable (Paths.Request) async throws(Failure) -> Paths.Response
-        public var referrers:
-            @Sendable (Referrers.Request) async throws(Failure) -> Referrers.Response
+        public var referrers: @Sendable (Referrers.Request) async throws(Failure) -> Referrers.Response
 
         public init(
             views: @escaping @Sendable (Views.Request) async throws(Failure) -> Views.Response,

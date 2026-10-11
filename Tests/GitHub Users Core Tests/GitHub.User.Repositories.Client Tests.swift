@@ -1,3 +1,4 @@
+import Tagged
 import Testing
 
 @testable import GitHub_Users

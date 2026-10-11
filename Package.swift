@@ -91,6 +91,10 @@ let package = Package(
             branch: "main"
         ),
         .package(
+            url: "https://github.com/swift-atoms/swift-tagged.git",
+            branch: "main"
+        ),
+        .package(
             url: "https://github.com/swift-ietf/swift-rfc-4648.git",
             branch: "main"
         ),
@@ -192,7 +196,13 @@ let package = Package(
         ),
         .testTarget(
             name: "GitHub Organizations Core Tests",
-            dependencies: [.target(name: "GitHub Organizations")]
+            dependencies: [
+                .target(name: "GitHub Organizations"),
+                .product(
+                    name: "Tagged",
+                    package: "swift-tagged"
+                ),
+            ]
         ),
         .target(
             name: "GitHub Repositories",
@@ -205,7 +215,13 @@ let package = Package(
         ),
         .testTarget(
             name: "GitHub Repositories Core Tests",
-            dependencies: [.target(name: "GitHub Repositories")]
+            dependencies: [
+                .target(name: "GitHub Repositories"),
+                .product(
+                    name: "Tagged",
+                    package: "swift-tagged"
+                ),
+            ]
         ),
         .target(
             name: "GitHub Stargazers",
@@ -226,7 +242,13 @@ let package = Package(
         ),
         .testTarget(
             name: "GitHub Stargazers Core Tests",
-            dependencies: [.target(name: "GitHub Stargazers")]
+            dependencies: [
+                .target(name: "GitHub Stargazers"),
+                .product(
+                    name: "Tagged",
+                    package: "swift-tagged"
+                ),
+            ]
         ),
         .target(
             name: "GitHub Traffic",
@@ -239,7 +261,13 @@ let package = Package(
         ),
         .testTarget(
             name: "GitHub Traffic Core Tests",
-            dependencies: [.target(name: "GitHub Traffic")]
+            dependencies: [
+                .target(name: "GitHub Traffic"),
+                .product(
+                    name: "Tagged",
+                    package: "swift-tagged"
+                ),
+            ]
         ),
         .target(
             name: "GitHub Users",
@@ -260,8 +288,30 @@ let package = Package(
         ),
         .testTarget(
             name: "GitHub Users Core Tests",
-            dependencies: [.target(name: "GitHub Users")]
+            dependencies: [
+                .target(name: "GitHub Users"),
+                .product(
+                    name: "Tagged",
+                    package: "swift-tagged"
+                ),
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]
 )
+
+for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
+    let ecosystem: [SwiftSetting] = [
+        .strictMemorySafety(),
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+        .enableExperimentalFeature("Lifetimes"),
+        .enableUpcomingFeature("InferIsolatedConformances"),
+    ]
+
+    let package: [SwiftSetting] = []
+
+    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
+}
