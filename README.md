@@ -171,4 +171,4 @@ workspace package test
 
 ## License
 
-This package is available under the MIT license.
+Apache 2.0. See [LICENSE.md](LICENSE.md).
