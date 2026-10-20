@@ -77,7 +77,10 @@ extension GitHub.App {
             key = try soleKey(in: directory)
         }
         guard key.stat.exists else {
-            throw .key("the configured signing key does not exist")
+            throw .key(
+                "the configured signing key \(key.path) does not exist; "
+                    + Self.regeneration(in: directory)
+            )
         }
 
         return .init(identity: identity, key: key, directory: directory)
@@ -100,9 +103,19 @@ extension GitHub.App {
         return root[directory: ".config"][directory: name]
     }
 
+    static func regeneration(in directory: File.Directory) -> Swift.String {
+        "regenerate it: open the GitHub App's settings (Developer settings, GitHub Apps, "
+            + "Edit, Private keys), generate a new private key, delete the older keys there "
+            + "(which revokes them), and save the new file as "
+            + "\(directory.path)/<name>.<date>.private-key.pem with chmod 600, as the only .pem"
+    }
+
     static func soleKey(in directory: File.Directory) throws(Error) -> File {
         guard directory.stat.exists else {
-            throw .key("the configuration directory does not exist")
+            throw .key(
+                "the configuration directory \(directory.path) does not exist; "
+                    + Self.regeneration(in: directory)
+            )
         }
         let entries: [File.Directory.Entry]
         do throws(File.Directory.Contents.Error) {
@@ -123,10 +136,10 @@ extension GitHub.App {
         guard let key = candidates.first, candidates.count == 1 else {
             throw .key(
                 candidates.isEmpty
-                    ? "no signing key was found in the configuration directory; "
-                        + "pass --key or set \(keyVariable)"
-                    : "\(candidates.count) candidate signing keys are installed; "
-                        + "pass --key to choose one"
+                    ? "no signing key (*.pem) was found in \(directory.path); "
+                        + "pass --key or set \(keyVariable), or " + Self.regeneration(in: directory)
+                    : "\(candidates.count) candidate signing keys are installed in "
+                        + "\(directory.path); pass --key to choose one, or delete the revoked ones"
             )
         }
         return key

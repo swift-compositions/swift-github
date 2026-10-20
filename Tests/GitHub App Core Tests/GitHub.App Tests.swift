@@ -1,9 +1,25 @@
+import Paths
 import Testing
 
 @testable import GitHub_App
 
 @Suite
 struct `GitHub App Tests` {
+
+    @Test
+    func `a missing key directory names the directory and how to regenerate the key`() throws {
+        let directory = try GitHub.App.configurationDirectory(named: "no-such-bot-for-tests")
+
+        do throws(GitHub.App.Error) {
+            _ = try GitHub.App.soleKey(in: directory)
+            Issue.record("expected the missing directory to be refused")
+        } catch {
+            let message = error.description
+            #expect(message.contains("no-such-bot-for-tests"))
+            #expect(message.contains("generate a new private key"))
+            #expect(message.contains("private-key.pem"))
+        }
+    }
 
     @Test
     func `parses a name=level permission`() throws {
