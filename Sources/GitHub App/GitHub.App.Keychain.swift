@@ -65,7 +65,8 @@ extension GitHub.App.Keychain {
     static func missing(service: Swift.String) -> Swift.String {
         "no signing key for \(service) is in the login keychain; generate a new private key in "
             + "the GitHub App's settings (Developer settings, GitHub Apps, Edit, Private keys), "
-            + "delete the older keys there (which revokes them), and import the download with "
+            + "delete there the key it replaces (never the one CI's organization secrets hold), and "
+            + "import the download with "
             + "dotfiles' bin/github-app-key \(service), which stores it as the generic password "
             + "service \(service), account <application id>, and deletes the file"
     }
