@@ -23,7 +23,7 @@ extension GitHub.App.Assertion {
         app: GitHub.App,
         now: Swift.Int64
     ) throws(GitHub.App.Error) {
-        let pem = try GitHub.App.read(app.key)
+        let pem = try app.key.pem()
         let key: Signature.RSA.Key
         do {
             key = try Signature.RSA.Key(pem: pem)

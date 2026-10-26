@@ -10,11 +10,11 @@ extension GitHub {
 
         public let identity: Swift.String
 
-        public let key: File
+        public let key: Key
 
         public let directory: File.Directory
 
-        public init(identity: Swift.String, key: File, directory: File.Directory) {
+        public init(identity: Swift.String, key: Key, directory: File.Directory) {
             self.identity = identity
             self.key = key
             self.directory = directory
@@ -24,8 +24,6 @@ extension GitHub {
 
 extension GitHub.App {
 
-    public static let identityFileName: File.Path.Component = "application-id"
-
     public static let identityVariable = "GITHUB_APP_ID"
 
     public static let keyVariable = "GITHUB_APP_PRIVATE_KEY_PATH"
@@ -33,55 +31,48 @@ extension GitHub.App {
 
 extension GitHub.App {
 
+    /// Resolves the identity and signing key. The key is the `keyPath` argument, else the file
+    /// `GITHUB_APP_PRIVATE_KEY_PATH` names, else the login-keychain item whose service is
+    /// `name`. The identity is the argument, else `GITHUB_APP_ID`, else that item's account.
+    /// `name` also names the token cache directory under `~/.config`.
     public static func resolve(
         identity argument: Swift.String?,
         keyPath: Swift.String?,
-        configurationDirectoryName: File.Path.Component
+        name: File.Path.Component
     ) throws(Error) -> Self {
-        let directory = try configurationDirectory(named: configurationDirectoryName)
+        let directory = try configurationDirectory(named: name)
+        let service = name.description
+
+        let path: Swift.String?
+        if let keyPath, !keyPath.isEmpty {
+            path = keyPath
+        } else if let value = Environment.read(keyVariable), !value.isEmpty {
+            path = value
+        } else {
+            path = nil
+        }
+        let key: Key
+        if let path {
+            do throws(Paths.Path.Error) {
+                key = .file(File(try File.Path(path)))
+            } catch {
+                throw .key("the signing key path \(path) is not a usable path")
+            }
+        } else {
+            key = .keychain(service: service)
+        }
 
         let identity: Swift.String
         if let argument, !argument.isEmpty {
             identity = argument
         } else if let value = Environment.read(identityVariable), !value.isEmpty {
             identity = value
+        } else if case .keychain = key {
+            identity = try Keychain.identity(service: service)
         } else {
-            let file = directory[file: identityFileName]
-            guard file.stat.exists else { throw .identity }
-            let contents: Swift.String
-            do throws(Error) {
-                contents = try read(file)
-            } catch {
-                throw .identity
-            }
-            let trimmed = contents.trimmed()
-            guard !trimmed.isEmpty else { throw .identity }
-            identity = trimmed
+            throw .identity
         }
         guard identity.allSatisfy(\.isNumber) else { throw .identity }
-
-        let key: File
-        if let keyPath, !keyPath.isEmpty {
-            do throws(Paths.Path.Error) {
-                key = File(try File.Path(keyPath))
-            } catch {
-                throw .key("the --key argument is not a usable path")
-            }
-        } else if let value = Environment.read(keyVariable), !value.isEmpty {
-            do throws(Paths.Path.Error) {
-                key = File(try File.Path(value))
-            } catch {
-                throw .key("\(keyVariable) is not a usable path")
-            }
-        } else {
-            key = try soleKey(in: directory)
-        }
-        guard key.stat.exists else {
-            throw .key(
-                "the configured signing key \(key.path) does not exist; "
-                    + Self.regeneration(in: directory)
-            )
-        }
 
         return .init(identity: identity, key: key, directory: directory)
     }
@@ -92,7 +83,7 @@ extension GitHub.App {
         -> File.Directory
     {
         guard let home = Environment.read("HOME"), !home.isEmpty else {
-            throw .key("HOME is not available, so the configuration directory cannot be resolved")
+            throw .key("HOME is not available, so the token cache directory cannot be resolved")
         }
         let root: File.Directory
         do throws(Paths.Path.Error) {
@@ -101,48 +92,6 @@ extension GitHub.App {
             throw .key("HOME is not a usable path")
         }
         return root[directory: ".config"][directory: name]
-    }
-
-    static func regeneration(in directory: File.Directory) -> Swift.String {
-        "regenerate it: open the GitHub App's settings (Developer settings, GitHub Apps, "
-            + "Edit, Private keys), generate a new private key, delete the older keys there "
-            + "(which revokes them), and save the new file as "
-            + "\(directory.path)/<name>.<date>.private-key.pem with chmod 600, as the only .pem"
-    }
-
-    static func soleKey(in directory: File.Directory) throws(Error) -> File {
-        guard directory.stat.exists else {
-            throw .key(
-                "the configuration directory \(directory.path) does not exist; "
-                    + Self.regeneration(in: directory)
-            )
-        }
-        let entries: [File.Directory.Entry]
-        do throws(File.Directory.Contents.Error) {
-            entries = try File.Directory.Contents.list(at: directory)
-        } catch {
-            throw .key("the configuration directory could not be listed")
-        }
-        let candidates = entries.compactMap { entry -> File? in
-            guard entry.type == .file else { return nil }
-            let name = entry.name.description
-            guard name.hasSuffix(".pem") else { return nil }
-            do throws(Paths.Path.Component.Error) {
-                return directory[file: try File.Path.Component(name)]
-            } catch {
-                return nil
-            }
-        }
-        guard let key = candidates.first, candidates.count == 1 else {
-            throw .key(
-                candidates.isEmpty
-                    ? "no signing key (*.pem) was found in \(directory.path); "
-                        + "pass --key or set \(keyVariable), or " + Self.regeneration(in: directory)
-                    : "\(candidates.count) candidate signing keys are installed in "
-                        + "\(directory.path); pass --key to choose one, or delete the revoked ones"
-            )
-        }
-        return key
     }
 
     static func read(_ file: File) throws(Error) -> Swift.String {

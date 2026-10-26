@@ -33,7 +33,7 @@ extension GitHub.App.Error {
         switch self {
         case .identity:
             "no GitHub App identity is configured; pass --app-id, set GITHUB_APP_ID, "
-                + "or write the identity file in the configuration directory"
+                + "or store the key in the login keychain with the identity as its account"
 
         case .key(let message): message
 

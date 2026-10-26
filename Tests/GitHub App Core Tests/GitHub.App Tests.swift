@@ -7,18 +7,24 @@ import Testing
 struct `GitHub App Tests` {
 
     @Test
-    func `a missing key directory names the directory and how to regenerate the key`() throws {
-        let directory = try GitHub.App.configurationDirectory(named: "no-such-bot-for-tests")
-
+    func `a missing keychain item names the service and how to import a new key`() {
         do throws(GitHub.App.Error) {
-            _ = try GitHub.App.soleKey(in: directory)
-            Issue.record("expected the missing directory to be refused")
+            _ = try GitHub.App.resolve(identity: "1", keyPath: nil, name: "no-such-bot-for-tests")
+                .key.pem()
+            Issue.record("expected the missing keychain item to be refused")
         } catch {
             let message = error.description
             #expect(message.contains("no-such-bot-for-tests"))
             #expect(message.contains("generate a new private key"))
-            #expect(message.contains("private-key.pem"))
+            #expect(message.contains("bin/github-app-key"))
         }
+    }
+
+    @Test
+    func `decodes the hex security prints for a multi-line secret`() {
+        #expect(GitHub.App.Keychain.decodedHex("2d2d0a6162") == "--\nab")
+        #expect(GitHub.App.Keychain.decodedHex("-----BEGIN") == nil)
+        #expect(GitHub.App.Keychain.decodedHex("abc") == nil)
     }
 
     @Test
