@@ -165,8 +165,8 @@ The stargazer and authenticated-user repository traversals
 ## Development
 
 ```bash
-workspace package build
-workspace package test
+swift build
+swift test
 ```
 
 ## License
