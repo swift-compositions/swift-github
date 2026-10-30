@@ -71,10 +71,19 @@ extension GitHub.App.Keychain {
             + "service \(service), account <application id>, and deletes the file"
     }
 
+    /// Off macOS there is no login keychain, so the key has to come from a file.
+    static func unavailable(service: Swift.String) -> Swift.String {
+        "there is no login keychain on this platform to read the \(service) signing key from; "
+            + "pass the path of its PEM file in \(GitHub.App.keyVariable) or as the key path"
+    }
+
     static func run(
         _ arguments: [Swift.String],
         service: Swift.String
     ) throws(GitHub.App.Error) -> Swift.String {
+        #if !os(macOS)
+            throw .key(unavailable(service: service))
+        #else
         let output: Process.Output
         do throws(Process.Error) {
             output = try Process.Spawn.run(
@@ -90,5 +99,6 @@ extension GitHub.App.Keychain {
         guard code != 44 else { throw .key(missing(service: service)) }
         guard code == 0 else { throw .key("\(tool) could not read the \(service) item (exit \(code))") }
         return Swift.String(decoding: output.stdout ?? [], as: Swift.UTF8.self)
+        #endif
     }
 }

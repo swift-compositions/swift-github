@@ -15,8 +15,12 @@ struct `GitHub App Tests` {
         } catch {
             let message = error.description
             #expect(message.contains("no-such-bot-for-tests"))
-            #expect(message.contains("generate a new private key"))
-            #expect(message.contains("bin/github-app-key"))
+            #if os(macOS)
+                #expect(message.contains("generate a new private key"))
+                #expect(message.contains("bin/github-app-key"))
+            #else
+                #expect(message.contains(GitHub.App.keyVariable))
+            #endif
         }
     }
 
