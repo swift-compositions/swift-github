@@ -84,21 +84,21 @@ extension GitHub.App.Keychain {
         #if !os(macOS)
             throw .key(unavailable(service: service))
         #else
-        let output: Process.Output
-        do throws(Process.Error) {
-            output = try Process.Spawn.run(
-                .init(executable: tool, arguments: arguments, stdout: .pipe, stderr: .pipe)
-            )
-        } catch {
-            throw .key("cannot execute \(tool): \(error)")
-        }
-        guard case .exited(let code) = output.status else {
-            throw .key("\(tool) did not exit normally: \(output.status)")
-        }
-        // 44 is security's "the specified item could not be found in the keychain".
-        guard code != 44 else { throw .key(missing(service: service)) }
-        guard code == 0 else { throw .key("\(tool) could not read the \(service) item (exit \(code))") }
-        return Swift.String(decoding: output.stdout ?? [], as: Swift.UTF8.self)
+            let output: Process.Output
+            do throws(Process.Error) {
+                output = try Process.Spawn.run(
+                    .init(executable: tool, arguments: arguments, stdout: .pipe, stderr: .pipe)
+                )
+            } catch {
+                throw .key("cannot execute \(tool): \(error)")
+            }
+            guard case .exited(let code) = output.status else {
+                throw .key("\(tool) did not exit normally: \(output.status)")
+            }
+            // 44 is security's "the specified item could not be found in the keychain".
+            guard code != 44 else { throw .key(missing(service: service)) }
+            guard code == 0 else { throw .key("\(tool) could not read the \(service) item (exit \(code))") }
+            return Swift.String(decoding: output.stdout ?? [], as: Swift.UTF8.self)
         #endif
     }
 }
