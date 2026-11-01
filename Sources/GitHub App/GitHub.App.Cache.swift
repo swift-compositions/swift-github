@@ -21,7 +21,7 @@ extension GitHub.App.Cache {
     ) -> File {
 
         let name = "token.\(Self.key(organization: organization, permissions: permissions)).json"
-        do throws(Paths.Path.Component.Error) {
+        do throws(Path::Path.Component.Error) {
             return directory[file: try File.Path.Component(name)]
         } catch {
             return directory[file: "token.invalid.json"]

@@ -53,7 +53,7 @@ extension GitHub.App {
         }
         let key: Key
         if let path {
-            do throws(Paths.Path.Error) {
+            do throws(Path::Path.Error) {
                 key = .file(File(try File.Path(path)))
             } catch {
                 throw .key("the signing key path \(path) is not a usable path")
@@ -86,7 +86,7 @@ extension GitHub.App {
             throw .key("HOME is not available, so the token cache directory cannot be resolved")
         }
         let root: File.Directory
-        do throws(Paths.Path.Error) {
+        do throws(Path::Path.Error) {
             root = try File.Directory(validating: home)
         } catch {
             throw .key("HOME is not a usable path")
