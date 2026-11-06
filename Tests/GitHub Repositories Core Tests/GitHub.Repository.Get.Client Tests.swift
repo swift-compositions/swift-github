@@ -3,7 +3,13 @@ import Testing
 
 @testable import GitHub_Repositories
 
-extension GitHub.Repository.Get {
+enum `GitHub.Repository.Get Tests` {
+    typealias Client = GitHub.Repository.Get.Client
+    typealias Request = GitHub.Repository.Get.Request
+    typealias Response = GitHub.Repository.Get.Response
+}
+
+extension `GitHub.Repository.Get Tests` {
     @Suite("GitHub.Repository.Get.Client.Unit")
     struct Core {
         @Test("Repository lookup preserves its typed failure")

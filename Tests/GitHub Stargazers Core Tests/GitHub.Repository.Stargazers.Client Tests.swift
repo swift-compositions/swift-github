@@ -3,7 +3,14 @@ import Testing
 
 @testable import GitHub_Stargazers
 
-extension GitHub.Repository.Stargazers {
+enum `GitHub.Repository.Stargazers Tests` {
+    typealias Client = GitHub.Repository.Stargazers.Client
+    typealias Page = GitHub.Repository.Stargazers.Page
+    typealias Request = GitHub.Repository.Stargazers.Request
+    typealias Traversal = GitHub.Repository.Stargazers.Traversal
+}
+
+extension `GitHub.Repository.Stargazers Tests` {
     @Suite("GitHub.Repository.Stargazers.Client.Unit")
     struct Core {
         @Test("Traversal follows stargazer pages")

@@ -3,7 +3,14 @@ import Testing
 
 @testable import GitHub_Organizations
 
-extension GitHub.Organization.Repositories {
+enum `GitHub.Organization.Repositories Tests` {
+    typealias Client = GitHub.Organization.Repositories.Client
+    typealias Fixture = GitHub.Organization.Repositories.Fixture
+    typealias Page = GitHub.Organization.Repositories.Page
+    typealias Traversal = GitHub.Organization.Repositories.Traversal
+}
+
+extension `GitHub.Organization.Repositories Tests` {
     @Suite("GitHub.Organization.Repositories.Client.Unit")
     struct Core {
         @Test("Traversal follows pages and applies explicit ordering")

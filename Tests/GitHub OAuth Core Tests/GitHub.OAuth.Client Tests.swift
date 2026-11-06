@@ -3,7 +3,13 @@ import Testing
 
 @testable import GitHub_OAuth
 
-extension GitHub.OAuth {
+enum `GitHub.OAuth Tests` {
+    typealias Authorization = GitHub.OAuth.Authorization
+    typealias Fixture = GitHub.OAuth.Fixture
+    typealias Token = GitHub.OAuth.Token
+}
+
+extension `GitHub.OAuth Tests` {
     @Suite("GitHub.OAuth.Client.Unit")
     struct Core {
         @Test("Authorization preserves its typed failure")

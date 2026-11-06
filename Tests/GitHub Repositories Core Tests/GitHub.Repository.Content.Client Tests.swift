@@ -3,7 +3,14 @@ import Testing
 
 @testable import GitHub_Repositories
 
-extension GitHub.Repository.Content {
+enum `GitHub.Repository.Content Tests` {
+    typealias Client = GitHub.Repository.Content.Client
+    typealias Path = GitHub.Repository.Content.Path
+    typealias Request = GitHub.Repository.Content.Request
+    typealias Response = GitHub.Repository.Content.Response
+}
+
+extension `GitHub.Repository.Content Tests` {
     @Suite("GitHub.Repository.Content.Client.Unit")
     struct Core {
         @Test("The client preserves present and absent provider content")
@@ -43,7 +50,7 @@ extension GitHub.Repository.Content {
     }
 }
 
-extension GitHub.Repository.Content.Core.Fixture {
+extension `GitHub.Repository.Content Tests`.Core.Fixture {
     enum Failure: Swift.Error, Equatable, Sendable {
         case unexpected
     }

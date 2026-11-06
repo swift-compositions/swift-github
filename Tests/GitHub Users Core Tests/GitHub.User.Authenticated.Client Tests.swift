@@ -3,7 +3,12 @@ import Testing
 
 @testable import GitHub_Users
 
-extension GitHub.User.Authenticated {
+enum `GitHub.User.Authenticated Tests` {
+    typealias Emails = GitHub.User.Authenticated.Emails
+    typealias Get = GitHub.User.Authenticated.Get
+}
+
+extension `GitHub.User.Authenticated Tests` {
     @Suite("GitHub.User.Authenticated.Client.Unit")
     struct Core {
         @Test("Authenticated-user lookup preserves its typed failure")

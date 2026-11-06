@@ -3,7 +3,15 @@ import Testing
 
 @testable import GitHub_Traffic
 
-extension GitHub.Repository.Traffic {
+enum `GitHub.Repository.Traffic Tests` {
+    typealias Client = GitHub.Repository.Traffic.Client
+    typealias Clones = GitHub.Repository.Traffic.Clones
+    typealias Paths = GitHub.Repository.Traffic.Paths
+    typealias Referrers = GitHub.Repository.Traffic.Referrers
+    typealias Views = GitHub.Repository.Traffic.Views
+}
+
+extension `GitHub.Repository.Traffic Tests` {
     @Suite("GitHub.Repository.Traffic.Client.Unit")
     struct Core {
         @Test("Each traffic endpoint is a typed one-call capability")

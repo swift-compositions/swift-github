@@ -3,7 +3,14 @@ import Testing
 
 @testable import GitHub_Users
 
-extension GitHub.User.Repositories {
+enum `GitHub.User.Repositories Tests` {
+    typealias Client = GitHub.User.Repositories.Client
+    typealias Page = GitHub.User.Repositories.Page
+    typealias Request = GitHub.User.Repositories.Request
+    typealias Traversal = GitHub.User.Repositories.Traversal
+}
+
+extension `GitHub.User.Repositories Tests` {
     @Suite("GitHub.User.Repositories.Client.Unit")
     struct Core {
         @Test("Traversal follows authenticated-user repository pages")
