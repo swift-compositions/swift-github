@@ -37,26 +37,20 @@ extension GitHub.App {
     /// `name` also names the token cache directory under `~/.config`.
     public static func resolve(
         identity argument: Swift.String?,
-        keyPath: Swift.String?,
+        keyPath: File.Path?,
         name: File.Path.Component
     ) throws(Error) -> Self {
         let directory = try configurationDirectory(named: name)
         let service = name.description
 
-        let path: Swift.String?
-        if let keyPath, !keyPath.isEmpty {
-            path = keyPath
-        } else if let value = Environment.read(keyVariable), !value.isEmpty {
-            path = value
-        } else {
-            path = nil
-        }
         let key: Key
-        if let path {
+        if let keyPath {
+            key = .file(File(keyPath))
+        } else if let value = Environment.read(keyVariable), !value.isEmpty {
             do throws(Path::Path.Error) {
-                key = .file(File(try File.Path(path)))
+                key = .file(File(try File.Path(value)))
             } catch {
-                throw .key("the signing key path \(path) is not a usable path")
+                throw .key("the signing key path \(value) is not a usable path")
             }
         } else {
             key = .keychain(service: service)
