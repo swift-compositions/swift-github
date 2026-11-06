@@ -1,5 +1,7 @@
 public import GitHub_Standard
-private import Process
+#if os(macOS)
+    private import Keychain_Security
+#endif
 
 extension GitHub.App {
 
@@ -7,35 +9,44 @@ extension GitHub.App {
     /// service is the bot's name, whose account is the application identity, and whose secret is
     /// the PEM.
     ///
-    /// It is read through `/usr/bin/security`, which created the item and so is already trusted
-    /// for it: no keychain prompt, however often the calling tool is rebuilt. The secret comes
-    /// back through a pipe, never on a command line. The login keychain, not iCloud Keychain: an
-    /// unsigned command-line tool is refused synchronizable items.
+    /// It is read through swift-keychain's `Keychain.Item.Tool`: no keychain prompt, however often the calling tool is
+    /// rebuilt. The login keychain, not iCloud Keychain: an unsigned command-line tool is refused synchronizable items.
     public enum Keychain {}
 }
 
 extension GitHub.App.Keychain {
 
-    static let tool = "/usr/bin/security"
-
     /// The application identity the item records as its account.
     static func identity(service: Swift.String) throws(GitHub.App.Error) -> Swift.String {
-        let attributes = try run(["find-generic-password", "-s", service], service: service)
-        for line in attributes.split(separator: "\n") {
-            guard let range = line.firstRange(of: #""acct"<blob>=""#) else { continue }
-            let value = line[range.upperBound...].dropLast()
-            guard !value.isEmpty, value.allSatisfy(\.isNumber) else { break }
-            return Swift.String(value)
-        }
-        throw .identity
+        #if os(macOS)
+            let account: Swift.String?
+            do throws(Keychain_Security::Keychain.Error) {
+                account = try Keychain_Security::Keychain.Item(service: service).tool.account()
+            } catch {
+                throw .key("the keychain could not read the \(service) item (status \(error.status))")
+            }
+            guard let account, !account.isEmpty, account.allSatisfy(\.isNumber) else { throw .identity }
+            return account
+        #else
+            throw .key(unavailable(service: service))
+        #endif
     }
 
     /// The PEM the item holds.
     static func secret(service: Swift.String) throws(GitHub.App.Error) -> Swift.String {
-        let output = try run(["find-generic-password", "-s", service, "-w"], service: service)
-            .trimmed()
-        // security prints a secret that is not one line of printable text, as a PEM is, in hex.
-        return decodedHex(output) ?? output
+        #if os(macOS)
+            let kept: Swift.String?
+            do throws(Keychain_Security::Keychain.Error) {
+                kept = try Keychain_Security::Keychain.Item(service: service).tool.read()
+            } catch {
+                throw .key("the keychain could not read the \(service) item (status \(error.status))")
+            }
+            guard let kept else { throw .key(missing(service: service)) }
+            // security prints a secret that is not one line of printable text, as a PEM is, in hex.
+            return decodedHex(kept) ?? kept
+        #else
+            throw .key(unavailable(service: service))
+        #endif
     }
 
     static func decodedHex(_ text: Swift.String) -> Swift.String? {
@@ -75,30 +86,5 @@ extension GitHub.App.Keychain {
     static func unavailable(service: Swift.String) -> Swift.String {
         "there is no login keychain on this platform to read the \(service) signing key from; "
             + "pass the path of its PEM file in \(GitHub.App.keyVariable) or as the key path"
-    }
-
-    static func run(
-        _ arguments: [Swift.String],
-        service: Swift.String
-    ) throws(GitHub.App.Error) -> Swift.String {
-        #if !os(macOS)
-            throw .key(unavailable(service: service))
-        #else
-            let output: Process.Output
-            do throws(Process.Error) {
-                output = try Process.Spawn.run(
-                    .init(executable: tool, arguments: arguments, stdout: .pipe, stderr: .pipe)
-                )
-            } catch {
-                throw .key("cannot execute \(tool): \(error)")
-            }
-            guard case .exited(let code) = output.status else {
-                throw .key("\(tool) did not exit normally: \(output.status)")
-            }
-            // 44 is security's "the specified item could not be found in the keychain".
-            guard code != 44 else { throw .key(missing(service: service)) }
-            guard code == 0 else { throw .key("\(tool) could not read the \(service) item (exit \(code))") }
-            return Swift.String(decoding: output.stdout ?? [], as: Swift.UTF8.self)
-        #endif
     }
 }

@@ -46,6 +46,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-compositions/swift-keychain.git", branch: "main"),
         .package(
             url: "https://github.com/swift-atoms/swift-async.git",
             branch: "main"
@@ -115,6 +116,7 @@ let package = Package(
         .target(
             name: "GitHub App",
             dependencies: [
+                .product(name: "Keychain Security", package: "swift-keychain"),
                 .product(
                     name: "Byte",
                     package: "swift-byte"
