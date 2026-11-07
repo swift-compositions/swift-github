@@ -4,7 +4,6 @@ public import GitHub_Standard
 #endif
 
 extension GitHub.App {
-
     /// The login-keychain item that holds an application's signing key: a generic password whose
     /// service is the bot's name, whose account is the application identity, and whose secret is
     /// the PEM.
@@ -15,7 +14,6 @@ extension GitHub.App {
 }
 
 extension GitHub.App.Keychain {
-
     /// The application identity the item records as its account.
     static func identity(service: Swift.String) throws(GitHub.App.Error) -> Swift.String {
         #if os(macOS)
@@ -42,7 +40,6 @@ extension GitHub.App.Keychain {
                 throw .key("the keychain could not read the \(service) item (status \(error.status))")
             }
             guard let kept else { throw .key(missing(service: service)) }
-            // security prints a secret that is not one line of printable text, as a PEM is, in hex.
             return decodedHex(kept) ?? kept
         #else
             throw .key(unavailable(service: service))
