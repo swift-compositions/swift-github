@@ -1,6 +1,7 @@
 public import GitHub_Standard
 
 extension GitHub.App {
+
     public struct Permission: Sendable, Equatable, Comparable {
         public let name: Swift.String
         public let level: Swift.String
@@ -9,16 +10,15 @@ extension GitHub.App {
             self.name = name
             self.level = level
         }
+
+        public static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.name == rhs.name ? lhs.level < rhs.level : lhs.name < rhs.name
+        }
     }
 }
 
 extension GitHub.App.Permission {
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.name == rhs.name ? lhs.level < rhs.level : lhs.name < rhs.name
-    }
-}
 
-extension GitHub.App.Permission {
     public init(argument: Swift.String) throws(GitHub.App.Error) {
         let halves = argument.split(separator: "=", omittingEmptySubsequences: false)
         guard halves.count == 2 else {
@@ -41,5 +41,6 @@ extension GitHub.App.Permission {
 }
 
 extension GitHub.App.Permission {
+
     var field: Swift.String { "permissions[\(name)]=\(level)" }
 }
