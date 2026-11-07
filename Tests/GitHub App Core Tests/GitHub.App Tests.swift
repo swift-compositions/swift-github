@@ -3,139 +3,143 @@ import Testing
 
 @testable import GitHub_App
 
-@Suite
-struct `GitHub App Tests` {
+enum `GitHub.App Tests` {}
 
-    @Test
-    func `a missing keychain item names the service and how to import a new key`() {
-        do throws(GitHub.App.Error) {
-            _ = try GitHub.App.resolve(identity: "1", keyPath: nil, name: "no-such-bot-for-tests")
-                .key.pem()
-            Issue.record("expected the missing keychain item to be refused")
-        } catch {
-            let message = error.description
-            #expect(message.contains("no-such-bot-for-tests"))
-            #if os(macOS)
-                #expect(message.contains("generate a new private key"))
-                #expect(message.contains("bin/github-app-key"))
-            #else
-                #expect(message.contains(GitHub.App.keyVariable))
-            #endif
+extension `GitHub.App Tests` {
+    @Suite
+    struct `GitHub App Tests` {
+
+        @Test
+        func `a missing keychain item names the service and how to import a new key`() {
+            do throws(GitHub.App.Error) {
+                _ = try GitHub.App.resolve(identity: "1", keyPath: nil, name: "no-such-bot-for-tests")
+                    .key.pem()
+                Issue.record("expected the missing keychain item to be refused")
+            } catch {
+                let message = error.description
+                #expect(message.contains("no-such-bot-for-tests"))
+                #if os(macOS)
+                    #expect(message.contains("generate a new private key"))
+                    #expect(message.contains("bin/github-app-key"))
+                #else
+                    #expect(message.contains(GitHub.App.keyVariable))
+                #endif
+            }
         }
-    }
 
-    @Test
-    func `decodes the hex security prints for a multi-line secret`() {
-        #expect(GitHub.App.Keychain.decodedHex("2d2d0a6162") == "--\nab")
-        #expect(GitHub.App.Keychain.decodedHex("-----BEGIN") == nil)
-        #expect(GitHub.App.Keychain.decodedHex("abc") == nil)
-    }
-
-    @Test
-    func `parses a name=level permission`() throws {
-        let permission = try GitHub.App.Permission(argument: "contents=read")
-        #expect(permission.name == "contents")
-        #expect(permission.level == "read")
-        #expect(permission.field == "permissions[contents]=read")
-    }
-
-    @Test(arguments: [
-        "contents", "contents=", "=read", "contents=read=write", "Contents=read",
-        "contents=READ", "contents-x=read", "contents=read;rm -rf /", "",
-    ])
-    func `rejects a malformed permission`(argument: Swift.String) {
-
-        #expect(throws: GitHub.App.Error.self) {
-            try GitHub.App.Permission(argument: argument)
+        @Test
+        func `decodes the hex security prints for a multi-line secret`() {
+            #expect(GitHub.App.Keychain.decodedHex("2d2d0a6162") == "--\nab")
+            #expect(GitHub.App.Keychain.decodedHex("-----BEGIN") == nil)
+            #expect(GitHub.App.Keychain.decodedHex("abc") == nil)
         }
-    }
 
-    @Test(arguments: ["swift-molecules", "swift-institute", "a", "swift-ietf"])
-    func `accepts a GitHub organization login`(login: Swift.String) throws {
-        try GitHub.App.validate(login)
-    }
+        @Test
+        func `parses a name=level permission`() throws {
+            let permission = try GitHub.App.Permission(argument: "contents=read")
+            #expect(permission.name == "contents")
+            #expect(permission.level == "read")
+            #expect(permission.field == "permissions[contents]=read")
+        }
 
-    @Test(arguments: ["", "-leading", "trailing-", "has space", "../escape", "a/b", "org?x"])
-    func `rejects anything that is not a login`(login: Swift.String) {
+        @Test(arguments: [
+            "contents", "contents=", "=read", "contents=read=write", "Contents=read",
+            "contents=READ", "contents-x=read", "contents=read;rm -rf /", "",
+        ])
+        func `rejects a malformed permission`(argument: Swift.String) {
 
-        #expect(throws: GitHub.App.Error.self) {
+            #expect(throws: GitHub.App.Error.self) {
+                try GitHub.App.Permission(argument: argument)
+            }
+        }
+
+        @Test(arguments: ["swift-molecules", "swift-institute", "a", "swift-ietf"])
+        func `accepts a GitHub organization login`(login: Swift.String) throws {
             try GitHub.App.validate(login)
         }
-    }
 
-    @Test
-    func `keys the cache by organization and permission set`() {
-        let narrow = GitHub.App.Cache.key(
-            organization: "swift-molecules",
-            permissions: [.init(name: "contents", level: "read")]
-        )
-        let wide = GitHub.App.Cache.key(
-            organization: "swift-molecules",
-            permissions: []
-        )
+        @Test(arguments: ["", "-leading", "trailing-", "has space", "../escape", "a/b", "org?x"])
+        func `rejects anything that is not a login`(login: Swift.String) {
 
-        #expect(narrow != wide)
-        #expect(wide == "swift-molecules.all")
-        #expect(narrow == "swift-molecules.contents-read")
-    }
+            #expect(throws: GitHub.App.Error.self) {
+                try GitHub.App.validate(login)
+            }
+        }
 
-    @Test
-    func `orders the permission set so the key is stable`() {
-        let one = GitHub.App.Cache.key(
-            organization: "swift-molecules",
-            permissions: [
-                .init(name: "metadata", level: "read"),
-                .init(name: "contents", level: "read"),
-            ]
-        )
-        let other = GitHub.App.Cache.key(
-            organization: "swift-molecules",
-            permissions: [
-                .init(name: "contents", level: "read"),
-                .init(name: "metadata", level: "read"),
-            ]
-        )
+        @Test
+        func `keys the cache by organization and permission set`() {
+            let narrow = GitHub.App.Cache.key(
+                organization: "swift-molecules",
+                permissions: [.init(name: "contents", level: "read")]
+            )
+            let wide = GitHub.App.Cache.key(
+                organization: "swift-molecules",
+                permissions: []
+            )
 
-        #expect(one == other)
-    }
+            #expect(narrow != wide)
+            #expect(wide == "swift-molecules.all")
+            #expect(narrow == "swift-molecules.contents-read")
+        }
 
-    @Test
-    func `reads GitHub's expiry as POSIX seconds`() throws {
-        #expect(GitHub.App.Timestamp.seconds(from: "1970-01-01T00:00:00Z") == 0)
-        #expect(GitHub.App.Timestamp.seconds(from: "2026-08-01T12:00:00Z") == 1_785_585_600)
-        #expect(GitHub.App.Timestamp.seconds(from: "2024-02-29T00:00:00Z") == 1_709_164_800)
-    }
+        @Test
+        func `orders the permission set so the key is stable`() {
+            let one = GitHub.App.Cache.key(
+                organization: "swift-molecules",
+                permissions: [
+                    .init(name: "metadata", level: "read"),
+                    .init(name: "contents", level: "read"),
+                ]
+            )
+            let other = GitHub.App.Cache.key(
+                organization: "swift-molecules",
+                permissions: [
+                    .init(name: "contents", level: "read"),
+                    .init(name: "metadata", level: "read"),
+                ]
+            )
 
-    @Test(arguments: [
-        "2026-08-01T12:00:00+01:00", "2026-08-01 12:00:00Z", "2026-08-01T12:00:00",
-        "2026-13-01T00:00:00Z", "2026-08-01T24:00:00Z", "", "Z",
-    ])
-    func `refuses a timestamp it cannot read exactly`(value: Swift.String) {
+            #expect(one == other)
+        }
 
-        #expect(GitHub.App.Timestamp.seconds(from: value) == nil)
-    }
+        @Test
+        func `reads GitHub's expiry as POSIX seconds`() throws {
+            #expect(GitHub.App.Timestamp.seconds(from: "1970-01-01T00:00:00Z") == 0)
+            #expect(GitHub.App.Timestamp.seconds(from: "2026-08-01T12:00:00Z") == 1_785_585_600)
+            #expect(GitHub.App.Timestamp.seconds(from: "2024-02-29T00:00:00Z") == 1_709_164_800)
+        }
 
-    @Test
-    func `holds a token back once it is inside the refresh margin`() {
-        let token = GitHub.App.Token(value: "irrelevant", expires: 1_000)
-        #expect(token.isUsable(at: 0))
-        #expect(token.isUsable(at: 699))
-        #expect(!token.isUsable(at: 700))
-        #expect(!token.isUsable(at: 1_001))
-    }
+        @Test(arguments: [
+            "2026-08-01T12:00:00+01:00", "2026-08-01 12:00:00Z", "2026-08-01T12:00:00",
+            "2026-13-01T00:00:00Z", "2026-08-01T24:00:00Z", "", "Z",
+        ])
+        func `refuses a timestamp it cannot read exactly`(value: Swift.String) {
 
-    @Test
-    func `encodes the assertion's signing input as unpadded base64url`() {
-        let input = GitHub.App.Assertion.signingInput(
-            header: #"{"alg":"RS256","typ":"JWT"}"#,
-            claims: #"{"iat":1,"exp":2,"iss":"7"}"#
-        )
-        let parts = input.split(separator: ".", omittingEmptySubsequences: false)
-        #expect(parts.count == 2)
+            #expect(GitHub.App.Timestamp.seconds(from: value) == nil)
+        }
 
-        #expect(!input.contains("="))
-        #expect(!input.contains("+"))
-        #expect(!input.contains("/"))
-        #expect(parts[0] == "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9")
+        @Test
+        func `holds a token back once it is inside the refresh margin`() {
+            let token = GitHub.App.Token(value: "irrelevant", expires: 1_000)
+            #expect(token.isUsable(at: 0))
+            #expect(token.isUsable(at: 699))
+            #expect(!token.isUsable(at: 700))
+            #expect(!token.isUsable(at: 1_001))
+        }
+
+        @Test
+        func `encodes the assertion's signing input as unpadded base64url`() {
+            let input = GitHub.App.Assertion.signingInput(
+                header: #"{"alg":"RS256","typ":"JWT"}"#,
+                claims: #"{"iat":1,"exp":2,"iss":"7"}"#
+            )
+            let parts = input.split(separator: ".", omittingEmptySubsequences: false)
+            #expect(parts.count == 2)
+
+            #expect(!input.contains("="))
+            #expect(!input.contains("+"))
+            #expect(!input.contains("/"))
+            #expect(parts[0] == "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9")
+        }
     }
 }
