@@ -9,10 +9,10 @@ enum `GitHub.User.Authenticated Tests` {
 }
 
 extension `GitHub.User.Authenticated Tests` {
-    @Suite("GitHub.User.Authenticated.Client.Unit")
+    @Suite
     struct Core {
-        @Test("Authenticated-user lookup preserves its typed failure")
-        func get() async {
+        @Test
+        func `Authenticated-user lookup preserves its typed failure`() async {
             let client = Get.Client<GitHub.User.Fixture.Failure> {
                 (request: Get.Request) async throws(GitHub.User.Fixture.Failure) in
                 #expect(request.accessToken == "access-token")
@@ -24,8 +24,8 @@ extension `GitHub.User.Authenticated Tests` {
             }
         }
 
-        @Test("Authenticated-user email listing preserves its typed failure")
-        func emails() async {
+        @Test
+        func `Authenticated-user email listing preserves its typed failure`() async {
             let client = Emails.List.Client<GitHub.User.Fixture.Failure> {
                 (request: Emails.List.Request) async throws(GitHub.User.Fixture.Failure) in
                 #expect(request.accessToken == "access-token")

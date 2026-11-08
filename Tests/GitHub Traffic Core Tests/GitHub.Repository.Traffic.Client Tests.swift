@@ -12,10 +12,10 @@ enum `GitHub.Repository.Traffic Tests` {
 }
 
 extension `GitHub.Repository.Traffic Tests` {
-    @Suite("GitHub.Repository.Traffic.Client.Unit")
+    @Suite
     struct Core {
-        @Test("Each traffic endpoint is a typed one-call capability")
-        func capabilities() async throws(GitHub.Repository.Traffic.Fixture.Failure) {
+        @Test
+        func `Each traffic endpoint is a typed one-call capability`() async throws(GitHub.Repository.Traffic.Fixture.Failure) {
             let client = Client<GitHub.Repository.Traffic.Fixture.Failure>(
                 views: { _ async throws(GitHub.Repository.Traffic.Fixture.Failure) in
                     .init(count: 1, uniques: 1, views: [])
@@ -52,8 +52,8 @@ extension `GitHub.Repository.Traffic Tests` {
             #expect(referrers.referrers.isEmpty)
         }
 
-        @Test("Traffic endpoint failures remain typed")
-        func failure() async {
+        @Test
+        func `Traffic endpoint failures remain typed`() async {
             let client = Client<GitHub.Repository.Traffic.Fixture.Failure>(
                 views: {
                     (

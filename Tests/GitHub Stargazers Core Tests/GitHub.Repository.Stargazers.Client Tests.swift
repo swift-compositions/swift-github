@@ -11,10 +11,10 @@ enum `GitHub.Repository.Stargazers Tests` {
 }
 
 extension `GitHub.Repository.Stargazers Tests` {
-    @Suite("GitHub.Repository.Stargazers.Client.Unit")
+    @Suite
     struct Core {
-        @Test("Traversal follows stargazer pages")
-        func traversal() async throws {
+        @Test
+        func `Traversal follows stargazer pages`() async throws {
             guard let second = GitHub.Page.Number(rawValue: 2) else {
                 Issue.record("invalid page fixture")
                 return
@@ -64,8 +64,8 @@ extension `GitHub.Repository.Stargazers Tests` {
             #expect(stargazers.isEmpty)
         }
 
-        @Test("Traversal reports typed client, cycle, page, and cancellation failures")
-        func failures() async {
+        @Test
+        func `Traversal reports typed client, cycle, page, and cancellation failures`() async {
             let request = GitHub.Repository.Stargazers.Request(
                 owner: .init("swiftlang"),
                 repository: .init("swift"),

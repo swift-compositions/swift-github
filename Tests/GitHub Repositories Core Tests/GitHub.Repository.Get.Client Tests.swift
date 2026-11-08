@@ -10,10 +10,10 @@ enum `GitHub.Repository.Get Tests` {
 }
 
 extension `GitHub.Repository.Get Tests` {
-    @Suite("GitHub.Repository.Get.Client.Unit")
+    @Suite
     struct Core {
-        @Test("Repository lookup preserves its typed failure")
-        func failure() async {
+        @Test
+        func `Repository lookup preserves its typed failure`() async {
             let client = Client<GitHub.Repository.Fixture.Failure> {
                 (request: Request) async throws(GitHub.Repository.Fixture.Failure) -> Response in
                 #expect(request.owner == .init("swiftlang"))

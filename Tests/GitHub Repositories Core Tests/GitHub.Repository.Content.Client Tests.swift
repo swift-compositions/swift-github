@@ -11,10 +11,10 @@ enum `GitHub.Repository.Content Tests` {
 }
 
 extension `GitHub.Repository.Content Tests` {
-    @Suite("GitHub.Repository.Content.Client.Unit")
+    @Suite
     struct Core {
-        @Test("The client preserves present and absent provider content")
-        func presence() async throws {
+        @Test
+        func `The client preserves present and absent provider content`() async throws {
             let client = Client<Fixture.Failure> { request in
                 request.repository.underlying == "swift-package"
                     ? .init(kind: .file)
@@ -25,8 +25,8 @@ extension `GitHub.Repository.Content Tests` {
             #expect(try await client.get(self.request("not-a-package")) == nil)
         }
 
-        @Test("The client preserves typed failures")
-        func failure() async {
+        @Test
+        func `The client preserves typed failures`() async {
             let client = Client<Fixture.Failure> {
                 (_: Request) async throws(Fixture.Failure) -> Response? in
                 throw .unexpected

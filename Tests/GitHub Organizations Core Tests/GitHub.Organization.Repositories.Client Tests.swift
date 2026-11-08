@@ -11,10 +11,10 @@ enum `GitHub.Organization.Repositories Tests` {
 }
 
 extension `GitHub.Organization.Repositories Tests` {
-    @Suite("GitHub.Organization.Repositories.Client.Unit")
+    @Suite
     struct Core {
-        @Test("Traversal follows pages and applies explicit ordering")
-        func traversal() async throws {
+        @Test
+        func `Traversal follows pages and applies explicit ordering`() async throws {
             let client = try self.client()
             let request = self.request(page: .first)
             let repositories = try await client.all(
@@ -32,8 +32,8 @@ extension `GitHub.Organization.Repositories Tests` {
             )
         }
 
-        @Test("Traversal applies the selected duplicate policy")
-        func duplicate() async throws {
+        @Test
+        func `Traversal applies the selected duplicate policy`() async throws {
             let client = try self.client()
             let request = self.request(page: .first)
             let repositories = try await client.all(
@@ -58,8 +58,8 @@ extension `GitHub.Organization.Repositories Tests` {
             }
         }
 
-        @Test("Traversal fails rather than returning an incomplete bounded result")
-        func limit() async throws {
+        @Test
+        func `Traversal fails rather than returning an incomplete bounded result`() async throws {
             let client = try self.client()
             await #expect(
                 throws:
@@ -75,8 +75,8 @@ extension `GitHub.Organization.Repositories Tests` {
             }
         }
 
-        @Test("Traversal observes cancellation before requesting a page")
-        func cancellation() async throws {
+        @Test
+        func `Traversal observes cancellation before requesting a page`() async throws {
             let client = try self.client()
             let task = Task {
                 try await client.all(

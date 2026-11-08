@@ -11,10 +11,10 @@ enum `GitHub.User.Repositories Tests` {
 }
 
 extension `GitHub.User.Repositories Tests` {
-    @Suite("GitHub.User.Repositories.Client.Unit")
+    @Suite
     struct Core {
-        @Test("Traversal follows authenticated-user repository pages")
-        func traversal() async throws {
+        @Test
+        func `Traversal follows authenticated-user repository pages`() async throws {
             guard let second = GitHub.Page.Number(rawValue: 2) else {
                 Issue.record("invalid page fixture")
                 return
@@ -52,8 +52,8 @@ extension `GitHub.User.Repositories Tests` {
             #expect(repositories.isEmpty)
         }
 
-        @Test("Traversal reports typed client, cycle, page, and cancellation failures")
-        func failures() async {
+        @Test
+        func `Traversal reports typed client, cycle, page, and cancellation failures`() async {
             let request = GitHub.User.Repositories.Request(
                 page: .first,
                 size: .maximum
